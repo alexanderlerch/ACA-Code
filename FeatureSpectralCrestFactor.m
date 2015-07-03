@@ -7,7 +7,7 @@
 %>
 %> @retval vtsc spectral crest factor
 % ======================================================================
-function [vtsc] = FeatureSpectralCrest (X, f_s)
+function [vtsc] = FeatureSpectralCrestFactor (X, f_s)
 
    vtsc = max(X,[],1) ./ sum(X,1);
    

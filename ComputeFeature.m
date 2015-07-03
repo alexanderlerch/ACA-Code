@@ -3,7 +3,7 @@
 %>
 %> supported features are:
 %>  'SpectralCentroid',
-%>  'SpectralCrest',
+%>  'SpectralCrestFactor',
 %>  'SpectralDecrease',
 %>  'SpectralFlatness',
 %>  'SpectralFlux',
