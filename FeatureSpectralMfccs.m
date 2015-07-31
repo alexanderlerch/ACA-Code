@@ -9,11 +9,7 @@
 % ======================================================================
 function [vmfcc] = FeatureSpectralMfccs(X, f_s)
 
-    if(exist('ComputeFeature') ~=2)
-        error('Please add the ACA scripts (https://github.com/alexanderlerch/ACA-Code) to your path!');
-    end
-
-    iNumCoeffs  = 13;
+     iNumCoeffs  = 13;
     
     % allocate memory
     vmfcc       = zeros(iNumCoeffs, size(X,2));
