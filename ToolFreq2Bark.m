@@ -6,7 +6,7 @@
 %>
 %> @retval bark value
 % ======================================================================
-function [mel] = ToolFreq2Bark(fInHz, cModel)
+function [bark] = ToolFreq2Bark(fInHz, cModel)
 
     if (nargin < 2)
         cModel  = 'Schroeder';
@@ -15,21 +15,21 @@ function [mel] = ToolFreq2Bark(fInHz, cModel)
     % set function handle
     hPitchFunc  = str2func (['aca' cModel]);
     
-    mel         = hPitchFunc(fInHz);
+    bark         = hPitchFunc(fInHz);
 end
 
-function [mel] = acaSchroeder(f)
-    mel         = 7 * asinh(f/650);
+function [bark] = acaSchroeder(f)
+    bark         = 7 * asinh(f/650);
 end
 
-function [mel] = acaTerhardt(f)
-    mel         = 13.3 * atan(0.75 * f/1000);
+function [bark] = acaTerhardt(f)
+    bark         = 13.3 * atan(0.75 * f/1000);
 end
 
-function [mel] = acaZwicker(f)
-    mel         = 13 * atan(0.76 * f/1000) + 3.5 * atan(f/7500);
+function [bark] = acaZwicker(f)
+    bark         = 13 * atan(0.76 * f/1000) + 3.5 * atan(f/7500);
 end
 
-function [mel] = acaTraunmuller(f)
-    mel         = 26.81/(1+1960./f) - 0.53;
+function [bark] = acaTraunmuller(f)
+    bark         = 26.81/(1+1960./f) - 0.53;
 end
