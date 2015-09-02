@@ -22,7 +22,7 @@ function [vppm, t] = FeatureTimePeakEnvelope(x, iBlockLength, iHopLength, f_s)
     vppm            = zeros(2,iNumOfBlocks);
     v_tmp           = zeros(1,iBlockLength);
 
-        %initialization
+    %initialization
     alpha           = 1 - [exp(-2.2 / (f_s * 0.01)), exp(-2.2 / (f_s * 1.5))];
 
     for (n = 1:iNumOfBlocks)
@@ -30,7 +30,7 @@ function [vppm, t] = FeatureTimePeakEnvelope(x, iBlockLength, iHopLength, f_s)
         i_stop    = min(length(x),i_start + iBlockLength - 1);
         
         % calculate the maximum
-        vppm(1,n)   = max(x(i_start:i_stop));
+        vppm(1,n)   = max(abs(x(i_start:i_stop)));
         
         % calculate the PPM value - take into account block overlaps
         % and discard concerns wrt efficiency
