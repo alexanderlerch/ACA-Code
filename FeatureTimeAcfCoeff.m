@@ -33,10 +33,14 @@ function [vacf, t] = FeatureTimeAcfCoeff(x, iBlockLength, iHopLength, f_s, eta)
         i_stop    = min(length(x),i_start + iBlockLength - 1);
         
         % calculate the acf
-        afCorr      = xcorr(x(i_start:i_stop), 'coeff');
+        if (sum(x(i_start:i_stop)) == 0)
+            afCorr = zeros(2*(i_stop-i_start)+1,1);
+        else
+            afCorr = xcorr(x(i_start:i_stop), 'coeff');
+        end
         afCorr      = afCorr((ceil((length(afCorr)/2))+1):end);
     
-        % find the maximum in the computed range
+        % find the coefficients as requested
         vacf(1:length(eta),n)   = afCorr(eta);
     end
 end
