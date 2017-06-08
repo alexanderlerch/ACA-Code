@@ -27,9 +27,9 @@ function [vsk] = FeatureSpectralKurtosis (X, f_s)
         % compute mean and standard deviation
         mu_X    = (f * X) ./ (sum(X,1));
         tmp     = repmat(f, size(X,2),1) - repmat(mu_X, size(X,1),1)';
-        var_X   = diag (tmp.^2 * X) ./ (sum(X,1)'*size(X,1));
+        var_X   = sum((tmp.^2)'.*X)' ./ (sum(X,1)'*size(X,1));
         
-        vsk    = diag (tmp.^4 * X) ./ (var_X.^2 .* sum(X,1)'*size(X,1));
+        vsk    = sum((tmp.^4)'.*X)' ./ (var_X.^2 .* sum(X,1)'*size(X,1));
     end
     vsk     = vsk-3;
        
