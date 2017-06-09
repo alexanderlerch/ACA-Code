@@ -31,7 +31,7 @@ function [vsk] = FeatureSpectralKurtosis (X, f_s)
         
         vsk    = sum((tmp.^4)'.*X)' ./ (var_X.^2 .* sum(X,1)'*size(X,1));
     end
-    vsk     = vsk-3;
+    vsk     = vsk'-3;
        
     % avoid NaN for silence frames
     vsk (sum(X,1) == 0) = 0;
