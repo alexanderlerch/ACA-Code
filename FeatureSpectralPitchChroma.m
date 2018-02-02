@@ -26,7 +26,7 @@ function [vpc] = FeatureSpectralPitchChroma(X, f_s)
 end
 
 %> generate the semi-tone filters (simple averaging)
-function [H] = GeneratePcFilters (iFftLength, f_s)
+function [H] = GeneratePcFilters (iSpecLength, f_s)
 
     % initialization at C4
     f_mid           = 261.63;
@@ -37,10 +37,10 @@ function [H] = GeneratePcFilters (iFftLength, f_s)
         iNumOctaves = iNumOctaves - 1;
     end
     
-    H               = zeros (12, iFftLength);
+    H               = zeros (12, iSpecLength);
     
     for (i = 1:12)
-        afBounds  = [2^(-1/24) 2^(1/24)] * f_mid * 2* iFftLength/f_s;
+        afBounds  = [2^(-1/24) 2^(1/24)] * f_mid * 2* (iSpecLength-1)/f_s;
         for (j = 1:iNumOctaves)
            iBounds                      = [ceil(2^(j-1)*afBounds(1)) floor(2^(j-1)*afBounds(2))];
            H(i,iBounds(1):iBounds(2))   = 1/(iBounds(2)+1-iBounds(1));
