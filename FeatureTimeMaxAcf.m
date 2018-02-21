@@ -38,15 +38,15 @@ function [vta, t] = FeatureTimeMaxAcf(x, iBlockLength, iHopLength, f_s)
         
         % ignore values until threshold was crossed
         eta_tmp     = find (afCorr < fMinThresh, 1);
-        eta_min     = max(eta_min, eta_tmp);
-
+        if (~isempty(eta_tmp))
+            eta_min = max(eta_min, eta_tmp);
+        end
+        
         % only take into account values after the first minimum
         afDeltaCorr = diff(afCorr);
         eta_tmp     = find(afDeltaCorr > 0, 1);
-        eta_min     = max(eta_min, eta_tmp);
-    
-        if (isempty(eta_min))
-            eta_min = floor (f_s/f_max);
+        if (~isempty(eta_tmp))
+            eta_min = max(eta_min, eta_tmp);
         end
         
         % find the maximum in the computed range
