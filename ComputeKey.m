@@ -1,7 +1,7 @@
 % ======================================================================
 %> @brief computes the key of the input audio (super simple variant)
 %>
-%> @param afAudioData: time domain sample data, dimension channels X samples
+%> @param afAudioData: time domain sample data, dimension samples X channels
 %> @param f_s: sample rate of audio data
 %> @param afWindow: FFT window of length iBlockLength (default: hann), can be [] empty
 %> @param iBlockLength: internal block length (default: 4096 samples)
@@ -44,9 +44,7 @@ function [cKey] = ComputeKey (afAudioData, f_s, afWindow, iBlockLength, iHopLeng
         afAudioData = mean(afAudioData,2);
     end
     % pre-processing: normalization (not necessary for many features)
-    if (size(afAudioData,2)> 1)
-        afAudioData = afAudioData/max(abs(afAudioData));
-    end
+    afAudioData = afAudioData/max(abs(afAudioData));
 
     % in the real world, we would do this block by block...
     [X,f,t]     = spectrogram(  afAudioData,...

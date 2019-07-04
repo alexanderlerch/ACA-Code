@@ -3,7 +3,7 @@
 %> called by ::ComputeFeature
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)
-%> @param f_s: sample rate of audio data (unused)
+%> @param f_s: sample rate of audio data
 %>
 %> @retval vpc pitch chroma
 % ======================================================================
@@ -42,7 +42,7 @@ function [H] = GeneratePcFilters (iSpecLength, f_s)
     for (i = 1:12)
         afBounds  = [2^(-1/24) 2^(1/24)] * f_mid * 2* (iSpecLength-1)/f_s;
         for (j = 1:iNumOctaves)
-           iBounds                      = [ceil(2^(j-1)*afBounds(1)) floor(2^(j-1)*afBounds(2))];
+           iBounds                      = [ceil(2^(j-1)*afBounds(1)) floor(2^(j-1)*afBounds(2))]+1;
            H(i,iBounds(1):iBounds(2))   = 1/(iBounds(2)+1-iBounds(1));
         end
         % increment to next semi-tone
