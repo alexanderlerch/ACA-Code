@@ -16,5 +16,5 @@ function [vsc] = FeatureSpectralCentroid (X, f_s)
     vsc (sum(X,1) == 0) = 0;
         
     % convert from index to Hz
-    vsc     = vsc / size(X,1) * f_s/2;
+    vsc     = vsc / (size(X,1)-1) * f_s/2;
 end
