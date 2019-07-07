@@ -5,7 +5,7 @@
 %> @param X: spectrogram (dimension FFTLength X Observations)
 %> @param f_s: sample rate of audio data 
 %>
-%> @retval v spectral spread (in Hz)
+%> @retval vss spectral spread (in Hz)
 % ======================================================================
 function [vss] = FeatureSpectralSpread (X, f_s)
 
@@ -23,7 +23,7 @@ function [vss] = FeatureSpectralSpread (X, f_s)
     vss     = sqrt(vss);
     
     % convert from index to Hz
-    vss     = vss / size(X,1) * f_s/2;
+    vss     = vss / (size(X,1)-1) * f_s/2;
        
     % avoid NaN for silence frames
     vss (sum(X,1) == 0) = 0;

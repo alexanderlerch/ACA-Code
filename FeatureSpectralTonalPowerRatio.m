@@ -6,11 +6,11 @@
 %> @param f_s: sample rate of audio data (unused)
 %> @param G_T: energy threshold
 %>
-%> @retval vsk tonal power ratio
+%> @retval vtpr tonal power ratio
 % ======================================================================
 function [vtpr] = FeatureSpectralTonalPowerRatio(X, f_s, G_T)
 
-    % initiliaze
+    % initialize
     if (nargin < 3)
         G_T = 5e-4;
     end

@@ -4,8 +4,9 @@
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)
 %> @param f_s: sample rate of audio data 
+%> @param kappa: cutoff ratio
 %>
-%> @retval v spectral rolloff (in Hz)
+%> @retval vsr spectral rolloff (in Hz)
 % ======================================================================
 function [vsr] = FeatureSpectralRolloff (X, f_s, kappa)
 
@@ -20,9 +21,9 @@ function [vsr] = FeatureSpectralRolloff (X, f_s, kappa)
     %compute rolloff
     afSum   = sum(X,1);
     for (n = 1:length(vsr))
-        vsr(n)  = find(cumsum(X(:,n)) >= kappa*afSum(n), 1); 
+        vsr(n)  = find(cumsum(X(:,n)) >= kappa*afSum(n), 1)-1; 
     end
     
     % convert from index to Hz
-    vsr     = vsr / size(X,1) * f_s/2;
+    vsr     = vsr / (size(X,1)-1) * f_s/2;
 end
