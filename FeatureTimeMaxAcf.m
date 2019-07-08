@@ -27,7 +27,7 @@ function [vta, t] = FeatureTimeMaxAcf(x, iBlockLength, iHopLength, f_s)
     vta             = zeros(1,iNumOfBlocks);
     
     for (n = 1:iNumOfBlocks)
-        eta_min     = floor (f_s/f_max);
+        eta_min     = ceil(f_s/f_max);
         
         i_start   = (n-1)*iHopLength + 1;
         i_stop    = min(length(x),i_start + iBlockLength - 1);
