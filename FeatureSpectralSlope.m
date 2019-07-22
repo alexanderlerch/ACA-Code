@@ -5,7 +5,7 @@
 %> @param X: spectrogram (dimension FFTLength X Observations)
 %> @param f_s: sample rate of audio data (unused)
 %>
-%> @retval vsk spectral slope
+%> @retval vssl spectral slope
 % ======================================================================
 function [vssl] = FeatureSpectralSlope (X, f_s)
 

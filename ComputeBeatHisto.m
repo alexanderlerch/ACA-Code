@@ -12,9 +12,8 @@
 %> @param iBlockLength: internal block length (default: 4096 samples)
 %> @param iHopLength: internal hop length (default: 512 samples)
 %>
-%> @retval f frequency
-%> @retval t time stamp for the frequency value
-%> @retval iPeaks indices of picked onset times
+%> @retval T: Beat histogram
+%> @retval Bpm: tempo axis
 % ======================================================================
 function [T, Bpm] = ComputeBeatHisto (afAudioData, f_s, afWindow, iBlockLength, iHopLength)
 

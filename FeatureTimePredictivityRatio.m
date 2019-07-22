@@ -1,5 +1,5 @@
 % ======================================================================
-%> @brief computes the zero crossing rate from a time domain signal
+%> @brief computes the predictivity ratio from a time domain signal
 %> called by ::ComputeFeature
 %>
 %> @param x: audio signal
