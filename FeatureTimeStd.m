@@ -25,7 +25,7 @@ function [vstd, t] = FeatureTimeStd(x, iBlockLength, iHopLength, f_s)
         i_start     = (n-1)*iHopLength + 1;
         i_stop      = min(length(x),i_start + iBlockLength - 1);
         
-        % calculate the standar deviation
+        % calculate the standard deviation
         vstd(n)     = std(x(i_start:i_stop),1);
     end
 end
