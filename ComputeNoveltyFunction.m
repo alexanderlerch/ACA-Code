@@ -60,6 +60,7 @@ function [d, t, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData, f_s
 
     % magnitude spectrum
     X           = abs(X)*2/iBlockLength;
+    X([1 end],:)= X([1 end],:)/sqrt(2); %let's be pedantic about normalization
 
     % novelty function
     d           = hNoveltyFunc(X, f_s);

@@ -16,7 +16,7 @@ function [vss] = FeatureSpectralSpread (X, f_s)
     vss     = zeros(size(vsc));
  
     % compute spread
-    X       = X.^2;
+    %X       = X.^2;
     for (n = 1:size(X,2))
         vss(n)  = (([0:size(X,1)-1]-vsc(n)).^2*X(:,n))./sum(X(:,n));
     end

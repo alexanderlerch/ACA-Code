@@ -27,7 +27,7 @@ function [H] = ToolMfccFb (iFftLength, f_s)
     % allocate memory for filters and set max amplitude
     H               = zeros(iNumFilters,iFftLength);
     afFilterMax     = 2./(f_u-f_l);
-    f_k             = (0:iFftLength-1)/iFftLength*f_s/2;
+    f_k             = (0:iFftLength-1)/(iFftLength-1)*f_s/2;
 
     % compute the transfer functions
     for (c = 1:iNumFilters)
