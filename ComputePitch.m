@@ -31,6 +31,17 @@ function [f, t] = ComputePitch (cPitchTrackName, afAudioData, f_s, afWindow, iBl
     if (nargin < 5)
         iBlockLength    = 4096;
     end
+  
+    % pre-processing: down-mixing
+    if (size(afAudioData,2)> 1)
+        afAudioData = mean(afAudioData,2);
+    end
+    % pre-processing: normalization (not necessary for many features)
+    if (length(afAudioData)> 1)
+        afAudioData = afAudioData/max(abs(afAudioData));
+    end
+ 
+    afAudioData = [afAudioData; zeros(iBlockLength,1)];
     
     if (IsSpectral(cPitchTrackName))
         if (nargin < 4 || isempty(afWindow))
@@ -41,15 +52,6 @@ function [f, t] = ComputePitch (cPitchTrackName, afAudioData, f_s, afWindow, iBl
         if (length(afWindow) ~= iBlockLength)
             error('window length mismatch');
         end        
-     
-        % pre-processing: down-mixing
-        if (size(afAudioData,2)> 1)
-            afAudioData = mean(afAudioData,2);
-        end
-        % pre-processing: normalization (not necessary for many features)
-        if (size(afAudioData,2)> 1)
-            afAudioData = afAudioData/max(abs(afAudioData));
-        end
 
         % in the real world, we would do this block by block...
         [X,f,t]     = spectrogram(  afAudioData,...
@@ -60,6 +62,7 @@ function [f, t] = ComputePitch (cPitchTrackName, afAudioData, f_s, afWindow, iBl
         
         % magnitude spectrum
         X           = abs(X)*2/iBlockLength;
+        X([1 end],:)= X([1 end],:)/sqrt(2); %let's be pedantic about normalization
         
         % compute frequency
         f           = hPitchFunc(X, f_s);
