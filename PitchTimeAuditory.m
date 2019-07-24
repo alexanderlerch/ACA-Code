@@ -44,6 +44,9 @@ function [f, t] = PitchTimeAuditory(x, iBlockLength, iHopLength, f_s)
  
         % compute ACF per band and summarize
         for (k = 1: iNumBands)
+            if sum(X(k,i_start:i_stop))<1e-20
+                continue;
+            end
             afCorr      = xcorr([X(k,i_start:i_stop), zeros(1,iBlockLength-(i_stop-i_start)-1)],'coeff');
             afSumCorr   = afSumCorr + afCorr((ceil((length(afCorr)/2))+1):end);
         end
@@ -61,5 +64,7 @@ function [f, t] = PitchTimeAuditory(x, iBlockLength, iHopLength, f_s)
     end
  
     % convert to Hz
-    f                   = f_s ./ f;
+    ind = f<eta_min;
+    f   = f_s ./ f;
+    f(ind==true) = 0;
 end
