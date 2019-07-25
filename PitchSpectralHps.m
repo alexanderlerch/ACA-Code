@@ -14,7 +14,7 @@ function [f] = PitchSpectralHps (X, f_s)
     f_min   = 300;
     
     afHps   = X;
-    k_min   = round(f_min/f_s * 2 * size(X,1));
+    k_min   = round(f_min/f_s * 2 * (size(X,1)-1))+1;
   
     % compute the HPS
     for (j = 2:iOrder)
@@ -23,5 +23,6 @@ function [f] = PitchSpectralHps (X, f_s)
     
     % find max index and convert to Hz
     [fDummy,f]  = max(afHps(k_min:end,:),[],1);
-    f           = (f + k_min - 1) / size(X,1) * f_s/2;
+    f           = (f + k_min - 2) / (size(X,1)-1) * f_s/2;
+    f(sum(afHps,1) == 0) = 0;
 end
