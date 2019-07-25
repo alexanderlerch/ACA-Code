@@ -1,7 +1,7 @@
 Matlab sources accompanying the book
 An Introduction to Audio Content Analysis - 
 Applications in Signal Processing and Music Informatics
-by Alexander Lerch, lerch@zplane.de
+by Alexander Lerch, info@AudioContentAnalysis.org
 
 Please note that the provided code examples as matlab 
 functions are only intended to showcase algorithmic 
@@ -34,10 +34,12 @@ conventions:
 - Tool*: additional help functions such as frequency scale 
 conversion, dynamic time warping, gammatone filterbank, ...
 
-Example: Compute and plot of the Spectral Centroid
+Example: Computation and plot of the Spectral Centroid
 
+```matlab
 [afAudioData, fs] = wavread(cWavePath);
 [v_sc,t] = ComputeFeature('SpectralCentroid', afAudioData, fs);
 plot(t,v)
 grid on, xlabel('t'),ylabel('v_sc')
+```
 
