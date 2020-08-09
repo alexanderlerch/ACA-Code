@@ -11,10 +11,12 @@
 %> @retval v feature value
 %> @retval t time stamp for the feature value
 % ======================================================================
-function [M, f_c, t] = ComputeMelSpectrogram (afAudioData, f_s, bLogarithmic, afWindow, iBlockLength, iHopLength, iNumMelBands)
+function [M, f_c, t] = ComputeMelSpectrogram (afAudioData, f_s, bLogarithmic, afWindow, iBlockLength, iHopLength, iNumMelBands, fMax)
 
     % set default parameters if necessary
-
+    if (nargin < 8)
+        fMax            = f_s/2;
+    end
     if (nargin < 7)
         iNumMelBands    = 128;
     end
@@ -66,7 +68,7 @@ function [M, f_c, t] = ComputeMelSpectrogram (afAudioData, f_s, bLogarithmic, af
     X([1 end],:)= X([1 end],:)/sqrt(2); %let's be pedantic about normalization
 
     % compute mel filters
-    [H,f_c] = ToolMelFb(iBlockLength, f_s, iNumMelBands);
+    [H,f_c] = ToolMelFb(iBlockLength, f_s, iNumMelBands, fMax);
 
     M = H*X;
     
@@ -76,11 +78,11 @@ function [M, f_c, t] = ComputeMelSpectrogram (afAudioData, f_s, bLogarithmic, af
     end
 end
 
-function [H,f_c] = ToolMelFb (iFftLength, f_s, iNumFilters)
+function [H,f_c] = ToolMelFb (iFftLength, f_s, iNumFilters, f_max)
 
     % initialization
     f_min = 0;
-    f_max = f_s / 2;
+    f_max = min(f_max,f_s / 2);
     f_fft = linspace(0, f_s/2, iFftLength/2+1);
     H = zeros(length(iNumFilters), length(f_fft));
 
