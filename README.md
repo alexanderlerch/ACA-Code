@@ -5,13 +5,13 @@ by Alexander Lerch, info@AudioContentAnalysis.org
 
 Please note that the provided code examples as matlab 
 functions are only intended to showcase algorithmic 
-principles – they are not suited to be used without 
+principles â€“ they are not suited to be used without 
 parameter optimization and additional algorithmic tuning.
 
 The majority of these matlab sources require the Matlab 
 Signal Processing Toolbox installed. Several scripts 
 (such as MFCCs and Gammatone filters) are based on 
-implementations in Slaney’s Auditory Toolbox.
+implementations in Slaneyâ€™s Auditory Toolbox.
 
 Please feel free to visit 
 http://www.audiocontentanalysis.org/code/
@@ -37,9 +37,13 @@ conversion, dynamic time warping, gammatone filterbank, ...
 Example: Computation and plot of the Spectral Centroid
 
 ```matlab
+% read audio file from cWavePath
 [afAudioData, fs] = wavread(cWavePath);
+
+% compute SpectralCentroid
 [v_sc,t] = ComputeFeature('SpectralCentroid', afAudioData, fs);
-plot(t,v)
-grid on, xlabel('t'),ylabel('v_sc')
+
+% plot result
+plot(t,v), grid on, xlabel('t'), ylabel('v_sc')
 ```
 
