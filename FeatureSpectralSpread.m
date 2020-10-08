@@ -10,7 +10,7 @@
 function [vss] = FeatureSpectralSpread (X, f_s)
 
     % get spectral centroid as index
-    vsc     = FeatureSpectralCentroid (X, f_s)*2/f_s * size(X,1);
+    vsc     = FeatureSpectralCentroid (X, f_s)*2/f_s * size(X,1)-1;
 
     % allocate memory
     vss     = zeros(size(vsc));
