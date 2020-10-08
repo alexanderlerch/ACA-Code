@@ -20,7 +20,7 @@ function [vacf, t] = FeatureTimeAcfCoeff(x, iBlockLength, iHopLength, f_s, eta)
     end
 
     % number of results
-    iNumOfBlocks    = ceil (length(x)/iHopLength);
+    iNumOfBlocks    = floor ((length(x)-iBlockLength)/iHopLength + 1);
     
     % compute time stamps
     t               = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;

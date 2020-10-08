@@ -16,7 +16,7 @@ function [vtp, t] = FeatureTimePredictivityRatio(x, iBlockLength, iHopLength, f_
     iNumPredCoeffs  = 12;
     
     % number of results
-    iNumOfBlocks    = ceil (length(x)/iHopLength);
+    iNumOfBlocks    = floor ((length(x)-iBlockLength)/iHopLength + 1);
     
     % compute time stamps
     t               = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
