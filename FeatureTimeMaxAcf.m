@@ -10,12 +10,16 @@
 %> @retval vta autocorrelation maximum
 %> @retval t time stamp
 % ======================================================================
-function [vta, t] = FeatureTimeMaxAcf(x, iBlockLength, iHopLength, f_s)
+function [vta, t] = FeatureTimeMaxAcf(x, iBlockLength, iHopLength, f_s, f_max, fMinThresh)
  
     % initialization
     % these values are arbitrary - adapt to your use case
-    f_max        = 2000;
-    fMinThresh      = 0.35;
+    if (nargin < 6)
+        f_max       = 2000;
+    end
+    if (nargin < 5)
+        fMinThresh  = 0.35;
+    end
 
     % number of results
     iNumOfBlocks    = ceil (length(x)/iHopLength);
