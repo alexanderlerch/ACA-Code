@@ -55,7 +55,7 @@ function [v, t] = ComputeFeature (cFeatureName, afAudioData, f_s, afWindow, iBlo
         afAudioData = afAudioData/max(abs(afAudioData));
     end
  
-    %afAudioData = [afAudioData; zeros(iBlockLength,1)];
+    afAudioData = [afAudioData; zeros(iBlockLength,1)];
     
     if (IsSpectral(cFeatureName))
         if (nargin < 4 || isempty(afWindow))
@@ -65,10 +65,7 @@ function [v, t] = ComputeFeature (cFeatureName, afAudioData, f_s, afWindow, iBlo
         % compute FFT window function
         if (length(afWindow) ~= iBlockLength)
             error('window length mismatch');
-        end        
-
-         
-        afAudioData = [afAudioData; zeros(iBlockLength,1)];
+        end                        
 
         % in the real world, we would do this block by block...
         [X,f,t]     = spectrogram(  afAudioData,...
