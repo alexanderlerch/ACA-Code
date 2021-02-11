@@ -68,7 +68,7 @@ function [M, f_c, t] = ComputeMelSpectrogram (afAudioData, f_s, bLogarithmic, af
     X([1 end],:)= X([1 end],:)/sqrt(2); %let's be pedantic about normalization
 
     % compute mel filters
-    [H,f_c] = ToolMelFb(iBlockLength, f_s, iNumMelBands, fMax);
+    [H,f_c] = locMelFb(iBlockLength, f_s, iNumMelBands, fMax);
 
     M = H*X;
     
@@ -78,13 +78,13 @@ function [M, f_c, t] = ComputeMelSpectrogram (afAudioData, f_s, bLogarithmic, af
     end
 end
 
-function [H,f_c] = ToolMelFb (iFftLength, f_s, iNumFilters, f_max)
+function [H,f_c] = locMelFb (iFftLength, f_s, iNumFilters, f_max)
 
     % initialization
     f_min = 0;
     f_max = min(f_max,f_s / 2);
     f_fft = linspace(0, f_s/2, iFftLength/2+1);
-    H = zeros(length(iNumFilters), length(f_fft));
+    H = zeros(iNumFilters, length(f_fft));
 
     % compute band center freqs
     mel_min = ToolFreq2Mel(f_min);
