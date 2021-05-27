@@ -18,14 +18,17 @@ function [mel] = ToolFreq2Mel(fInHz, cModel)
     mel         = hPitchFunc(fInHz);
 end
 
+% Fant
 function [mel] = acaFant(f)
     mel         = 1000 * log2(1 + f/1000);
 end
 
+% Shaughnessy
 function [mel] = acaShaughnessy(f)
     mel         = 2595 * log10(1 + f/700);
 end
 
+% Umesh
 function [mel] = acaUmesh(f)
     mel         = f./(2.4e-4*f + 0.741);
 end
