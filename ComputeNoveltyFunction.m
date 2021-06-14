@@ -47,9 +47,7 @@ function [d, t, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData, f_s
         afAudioData = mean(afAudioData,2);
     end
     % pre-processing: normalization (not necessary for many features)
-    if (size(afAudioData,2)> 1)
-        afAudioData = afAudioData/max(abs(afAudioData));
-    end
+    afAudioData = afAudioData/max(abs(afAudioData));
 
     % in the real world, we would do this block by block...
     [X,f,t]     = spectrogram(  afAudioData,...
@@ -71,6 +69,7 @@ function [d, t, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData, f_s
     d(d<0)          = 0;
     
     % compute threshold
+    iLengthLp       = min(iLengthLp,floor(length(d)/3));
     b               = ones(iLengthLp,1)/iLengthLp;
     G_T             = .5*mean(d(2:end)) + filtfilt (b,1,d);
     
