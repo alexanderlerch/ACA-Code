@@ -9,10 +9,14 @@
 % ======================================================================
 function [p, C] = ToolSimpleDtw(D)
  
+    % init directions for back-tracking [diag, vert, hori]
+    iDec            = [-1 -1; -1 0; 0 -1]; 
+
     % cost initialization
     C               = zeros(size(D));
     C(1,:)          = cumsum(D(1,:));
     C(:,1)          = cumsum(D(:,1));
+
     % traceback initialization
     DeltaP          = zeros(size(D));
     DeltaP(1,2:end) = 3; % (0,-1)
@@ -28,7 +32,6 @@ function [p, C] = ToolSimpleDtw(D)
     end
 
     % traceback
-    iDec= [-1 -1; -1 0; 0 -1]; % compare DeltaP contents: diag, vert, hori
     p   = size(D);  % start with the last element
     n   = [size(D,1), size(D,2)]; %[n_A, n_B];
     while ((n(1) > 1) || (n(2) > 1))
