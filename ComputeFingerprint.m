@@ -2,18 +2,13 @@
 %> @brief computes a fingerprint audio data (only the subfingerprint, one
 %fingerprint is comprised of 256 consecutive subfingerprint.
 %>
-%>
-%> @param cFeatureName: feature to compute, e.g. 'SpectralSkewness'
 %> @param afAudioData: time domain sample data, dimension channels X samples
 %> @param f_s: sample rate of audio data
-%> @param afWindow: FFT window of length iBlockLength (default: hann), can be [] empty
-%> @param iBlockLength: internal block length (default: 4096 samples)
-%> @param iHopLength: internal hop length (default: 2048 samples)
 %>
 %> @retval F series of subfingerprints
 %> @retval tf time stamp for the subfingerprints
 % ======================================================================
-function [F, tf] = ComputeFingerprint (afAudioData, f_s)
+function [SubFingerprint, tf] = ComputeFingerprint (afAudioData, f_s)
 
     % set default parameters
     target_fs = 5000;
@@ -58,12 +53,12 @@ function [F, tf] = ComputeFingerprint (afAudioData, f_s)
     E = H*X;
     
     % extract fingerprint through diff (both time and freq)
-    F = diff(diff(E,1,1),1,2);
-    tf = diff(tf);
+    SubFingerprint = diff(diff(E,1,1),1,2);
+    tf = tf(1:end-1) + iHopLength/2*target_fs;
 
     % quantize fingerprint
-    F(F<0) = 0;
-    F(F>0) = 1;
+    SubFingerprint(SubFingerprint<0) = 0;
+    SubFingerprint(SubFingerprint>0) = 1;
 end
 
 function [H] = genBands(iFFTLength, fs)
