@@ -33,9 +33,8 @@ function [f, t] = ComputePitch (cPitchTrackName, afAudioData, f_s, afWindow, iBl
     end
   
     % pre-processing: down-mixing
-    if (size(afAudioData,2)> 1)
-        afAudioData = mean(afAudioData,2);
-    end
+    afAudioData = ToolDownmix(afAudioData);
+
     % pre-processing: normalization (not necessary for many features)
     if (length(afAudioData)> 1)
         afAudioData = afAudioData/max(abs(afAudioData));

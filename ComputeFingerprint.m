@@ -16,13 +16,11 @@ function [SubFingerprint, tf] = ComputeFingerprint (afAudioData, f_s)
     iHopLength = 64;
   
     % pre-processing: down-mixing
-    if (size(afAudioData,2)> 1)
-        afAudioData = mean(afAudioData,2);
-    end
+    afAudioData = ToolDownmix(afAudioData);
+
     % pre-processing: normalization (not really necessary here but shouldn't hurt)
-    if (length(afAudioData)> 1)
-        afAudioData = afAudioData/max(abs(afAudioData));
-    end
+    afAudioData = ToolNormalizeAudio(afAudioData);
+
     % pre-processing: downsampling to target sample rate
     if (f_s ~= target_fs)
         afAudioData = resample(afAudioData,target_fs,f_s);

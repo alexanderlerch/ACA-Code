@@ -37,13 +37,10 @@ function [M, f_c, t] = ComputeMelSpectrogram (afAudioData, f_s, bLogarithmic, af
     end
  
     % pre-processing: down-mixing
-    if (size(afAudioData,2)> 1)
-        afAudioData = mean(afAudioData,2);
-    end
-    % pre-processing: normalization (not necessary for many features)
-    if (length(afAudioData)> 1)
-        afAudioData = afAudioData/max(abs(afAudioData));
-    end
+    afAudioData = ToolDownmix(afAudioData);
+    
+    % pre-processing: normalization 
+    afAudioData = ToolNormalizeAudio(afAudioData);
  
     afAudioData = [afAudioData; zeros(iBlockLength,1)];
     

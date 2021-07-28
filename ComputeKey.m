@@ -40,11 +40,10 @@ function [cKey] = ComputeKey (afAudioData, f_s, afWindow, iBlockLength, iHopLeng
     end        
 
     % pre-processing: down-mixing
-    if (size(afAudioData,2)> 1)
-        afAudioData = mean(afAudioData,2);
-    end
-    % pre-processing: normalization (not necessary for many features)
-    afAudioData = afAudioData/max(abs(afAudioData));
+    afAudioData = ToolDownmix(afAudioData);
+    
+    % pre-processing: normalization 
+    afAudioData = ToolNormalizeAudio(afAudioData);
 
     % in the real world, we would do this block by block...
     [X,f,t]     = spectrogram(  afAudioData,...

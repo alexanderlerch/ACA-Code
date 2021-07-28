@@ -41,11 +41,9 @@ function [d, t, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData, f_s
     fLengthLpInS    = 0.3;
     iLengthLp       = max(2,ceil(fLengthLpInS*f_s/iHopLength));
 
-    
     % pre-processing: down-mixing
-    if (size(afAudioData,2)> 1)
-        afAudioData = mean(afAudioData,2);
-    end
+    afAudioData = ToolDownmix(afAudioData);
+
     % pre-processing: normalization (not necessary for many features)
     afAudioData = afAudioData/max(abs(afAudioData));
 

@@ -47,13 +47,10 @@ function [v, t] = ComputeFeature (cFeatureName, afAudioData, f_s, afWindow, iBlo
     end
   
     % pre-processing: down-mixing
-    if (size(afAudioData,2)> 1)
-        afAudioData = mean(afAudioData,2);
-    end
+    afAudioData = ToolDownmix(afAudioData);
+    
     % pre-processing: normalization (not necessary for many features)
-    if (length(afAudioData)> 1)
-        afAudioData = afAudioData/max(abs(afAudioData));
-    end
+    afAudioData = ToolNormalizeAudio(afAudioData);
  
     afAudioData = [afAudioData; zeros(iBlockLength,1)];
     

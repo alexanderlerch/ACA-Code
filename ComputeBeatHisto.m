@@ -36,6 +36,9 @@ function [T, Bpm] = ComputeBeatHisto (afAudioData, f_s, method, afWindow, iBlock
         error('window length mismatch');
     end        
 
+    % pre-processing: down-mixing
+    afAudioData = ToolDownmix(afAudioData);
+
     % novelty function
     [d,t,peaks] = ComputeNoveltyFunction ('Flux', afAudioData, f_s, afWindow, iBlockLength, iHopLength);
 %     tmp = zeros(size(d));
