@@ -65,4 +65,5 @@ function [p, P_res] = ToolViterbi(P_E,P_T,p_s,bUseLogLikelihood)
             p(n) = I(p(n+1),n+1);
         end   
     end
+    p = p - 1; %we always start with 0
 end
