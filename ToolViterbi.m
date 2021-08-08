@@ -32,7 +32,7 @@ function [p, P_res] = ToolViterbi(P_E,P_T,p_s,bUseLogLikelihood)
         
         % traceback
         p = zeros(1,size(P_E,2));  
-        % start with the last element, the count down
+        % start with the last element, then count down
         [prob,p(end)] = max(P_res(:,end));
         for n = size(P_E,2)-1:-1:1
             p(n) = I(p(n+1),n+1);
@@ -65,5 +65,4 @@ function [p, P_res] = ToolViterbi(P_E,P_T,p_s,bUseLogLikelihood)
             p(n) = I(p(n+1),n+1);
         end   
     end
-    p = p - 1; %we always start with 0
 end
