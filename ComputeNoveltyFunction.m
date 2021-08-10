@@ -15,9 +15,10 @@
 %>
 %> @retval f frequency
 %> @retval t time stamp for the frequency value
+%> @retval G_T threshold function
 %> @retval iPeaks indices of picked onset times
 % ======================================================================
-function [d, t, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData, f_s, afWindow, iBlockLength, iHopLength)
+function [d, t, G_T, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData, f_s, afWindow, iBlockLength, iHopLength)
 
     % set function handle
     hNoveltyFunc    = str2func (['Novelty' cNoveltyName]);
@@ -38,14 +39,16 @@ function [d, t, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData, f_s
         error('window length mismatch');
     end        
 
-    fLengthLpInS    = 0.3;
-    iLengthLp       = max(2,ceil(fLengthLpInS*f_s/iHopLength));
+    fSmoothLpLenInS = 0.07;
+    fThreshLpLenInS = 0.14;
+    iSmoothLpLen    = max(2,ceil(fSmoothLpLenInS*f_s/iHopLength));
+    iThreshLpLen    = max(2,ceil(fThreshLpLenInS*f_s/iHopLength));
 
     % pre-processing: down-mixing
     afAudioData = ToolDownmix(afAudioData);
 
     % pre-processing: normalization (not necessary for many features)
-    afAudioData = afAudioData/max(abs(afAudioData));
+    afAudioData = ToolNormalizeAudio(afAudioData);
 
     % in the real world, we would do this block by block...
     [X,f,t]     = spectrogram(  afAudioData,...
@@ -59,17 +62,17 @@ function [d, t, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData, f_s
     X([1 end],:)= X([1 end],:)/sqrt(2); %let's be pedantic about normalization
 
     % novelty function
-    d           = hNoveltyFunc(X, f_s);
+    d       = hNoveltyFunc(X, f_s);
     
     % smooth novelty function
-    b               = ones(10,1)/10;
-    d               = filtfilt (b,1,d);
-    d(d<0)          = 0;
+    b       = ones(iSmoothLpLen,1)/iSmoothLpLen;
+    d       = filtfilt (b,1,d);
+    d(d<0)  = 0;
     
     % compute threshold
-    iLengthLp       = min(iLengthLp,floor(length(d)/3));
-    b               = ones(iLengthLp,1)/iLengthLp;
-    G_T             = .5*mean(d(2:end)) + filtfilt (b,1,d);
+    iLen    = min(iThreshLpLen,floor(length(d)/3));
+    b       = ones(iLen,1)/iLen;
+    G_T     = .4*mean(d(2:end)) + filtfilt (b,1,d);
     
     [fPeaks,iPeaks] = findpeaks(max(0,d-G_T)); 
     
