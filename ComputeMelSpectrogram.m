@@ -7,6 +7,8 @@
 %> @param afWindow: FFT window of length iBlockLength (default: hann), can be [] empty
 %> @param iBlockLength: internal block length (default: 4096 samples)
 %> @param iHopLength: internal hop length (default: 2048 samples)
+%> @param iNumMelBands: num of frequency bands (default: 128)
+%> @param fMax: maximum frequency (default: f_s/2)
 %>
 %> @retval v feature value
 %> @retval t time stamp for the feature value
