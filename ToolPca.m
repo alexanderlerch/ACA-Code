@@ -3,9 +3,9 @@
 %>
 %> @param V: input matrix (observations X features)
 %>
-%> @retval T transformation matrix (loadings)
-%> @retval u_pc transformed features
-%> @retval ev eigenvalues
+%> @retval T transformation matrix (loading)
+%> @retval u_pc transformed features (score)
+%> @retval ev eigenvalues (latent)
 % ======================================================================
 function [T,u_pc,ev] = ToolPca(V)
 
