@@ -12,5 +12,5 @@ function [f] = ToolMidi2Freq(p, f_A4)
         f_A4  = 440;
     end
 
-    f   = f_A4 * 2^((p-69)/12);
+    f   = f_A4 * 2.^((p-69)/12);
 end
