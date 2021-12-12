@@ -28,16 +28,23 @@ function [M, f_c, t] = ComputeMelSpectrogram (afAudioData, f_s, bLogarithmic, af
     if (nargin < 5)
         iBlockLength    = 4096;
     end
+    if (nargin < 4 || isempty(afWindow))
+        afWindow        = hann(iBlockLength,'periodic');
+    end
     if (nargin < 3)
         bLogarithmic    = true;
     end
     if (nargin < 1)
         load handel;
-        afAudioData = y;
-        f_s = Fs;
+        afAudioData     = y;
+        f_s             = Fs;
         clear y,Fs;
     end
- 
+    
+    if (length(afWindow) ~= iBlockLength)
+        error('window length mismatch');
+    end
+    
     % pre-processing: down-mixing
     afAudioData = ToolDownmix(afAudioData);
     
@@ -46,15 +53,6 @@ function [M, f_c, t] = ComputeMelSpectrogram (afAudioData, f_s, bLogarithmic, af
  
     afAudioData = [afAudioData; zeros(iBlockLength,1)];
     
-    if (nargin < 4 || isempty(afWindow))
-        afWindow    = hann(iBlockLength,'periodic');
-    end
-
-    % compute FFT window function
-    if (length(afWindow) ~= iBlockLength)
-        error('window length mismatch');
-    end        
-
     % in the real world, we would do this block by block...
     [X,f,t]     = spectrogram(  afAudioData,...
                                 afWindow,...
@@ -64,11 +62,12 @@ function [M, f_c, t] = ComputeMelSpectrogram (afAudioData, f_s, bLogarithmic, af
 
     % magnitude spectrum
     X           = abs(X)*2/iBlockLength;
-    X([1 end],:)= X([1 end],:)/sqrt(2); %let's be pedantic about normalization
+    X([1 end],:)= X([1 end],:)/sqrt(2); %normalization
 
     % compute mel filters
-    [H,f_c] = locMelFb(iBlockLength, f_s, iNumMelBands, fMax);
+    [H,f_c] = MelFb_I(iBlockLength, f_s, iNumMelBands, fMax);
 
+    % apply mel filters
     M = H*X;
     
     % amplitude to level
@@ -77,18 +76,18 @@ function [M, f_c, t] = ComputeMelSpectrogram (afAudioData, f_s, bLogarithmic, af
     end
 end
 
-function [H,f_c] = locMelFb (iFftLength, f_s, iNumFilters, f_max)
+function [H,f_c] = MelFb_I (iFftLength, f_s, iNumFilters, f_max)
 
     % initialization
-    f_min = 0;
-    f_max = min(f_max,f_s / 2);
-    f_fft = linspace(0, f_s/2, iFftLength/2+1);
-    H = zeros(iNumFilters, length(f_fft));
+    f_min   = 0;
+    f_max   = min(f_max,f_s / 2);
+    f_fft   = linspace(0, f_s/2, iFftLength/2+1);
+    H       = zeros(iNumFilters, length(f_fft));
 
     % compute band center freqs
     mel_min = ToolFreq2Mel(f_min);
     mel_max = ToolFreq2Mel(f_max);
-    f_mel = ToolMel2Freq(linspace(mel_min, mel_max, iNumFilters+2));
+    f_mel   = ToolMel2Freq(linspace(mel_min, mel_max, iNumFilters+2));
 
     f_l = f_mel(1:iNumFilters);
     f_c = f_mel(2:iNumFilters+1);
@@ -98,7 +97,7 @@ function [H,f_c] = locMelFb (iFftLength, f_s, iNumFilters, f_max)
 
     % compute the transfer functions
     for (c = 1:iNumFilters)
-        H(c,:)      = ...
+        H(c,:) = ...
             (f_fft > f_l(c) & f_fft <= f_c(c)).* ...
             afFilterMax(c).*(f_fft-f_l(c))/(f_c(c)-f_l(c)) + ...
             (f_fft > f_c(c) & f_fft < f_u(c)).* ...

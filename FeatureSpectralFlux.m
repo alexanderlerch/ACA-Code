@@ -10,8 +10,8 @@
 function [vsf] = FeatureSpectralFlux (X, f_s)
 
     % difference spectrum (set first diff to zero)
-    afDeltaX    = diff([X(:,1), X],1,2);
+    afDeltaX = diff([X(:,1), X],1,2);
     
     % flux
-    vsf         = sqrt(sum(afDeltaX.^2))/size(X,1);
+    vsf = sqrt(sum(afDeltaX.^2))/size(X,1);
 end

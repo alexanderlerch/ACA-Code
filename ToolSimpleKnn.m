@@ -16,7 +16,7 @@ function [class] = ToolSimpleKnn(TestFeatureVector, TrainFeatureMatrix, TrainCla
     end
  
     % compute distances to all training observations
-    d           = computeEucDist(TestFeatureVector, TrainFeatureMatrix);
+    d = computeEucDist_I(TestFeatureVector, TrainFeatureMatrix);
     
     % sort the distances to find closest
     [dummy,idx] = sort(d); 
@@ -24,9 +24,11 @@ function [class] = ToolSimpleKnn(TestFeatureVector, TrainFeatureMatrix, TrainCla
     % pick the majority of the k closest training observations
     % note that for multi-class problems and even k, this needs to be
     % refined
-    class       = mode(TrainClassIndices(idx(1:k)));
+    class = mode(TrainClassIndices(idx(1:k)));
 end
 
-function d = computeEucDist(A, B)
-    d = sqrt(sum(A.^2, 2)*ones(1,size(B,1)) - 2*A*B' + ones(size(A,1),1)*sum(B.^2, 2)');
+function d = computeEucDist_I(A, B)
+    d = sqrt(sum(A.^2, 2)*ones(1,size(B,1)) - ...
+        2*A*B' + ...
+        ones(size(A,1),1)*sum(B.^2, 2)');
 end

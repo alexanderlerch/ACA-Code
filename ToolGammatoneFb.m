@@ -13,27 +13,28 @@
 function [X, f_c] = ToolGammatoneFb(afAudioData, f_s, iNumBands, f_low)
     
     if (nargin < 4)
-        f_low       = 100;
+        f_low = 100;
     end
     if (nargin < 3)
-        iNumBands   = 20;
+        iNumBands = 20;
     end
         
     %initialization
     fEarQ   = 9.26449;				
     fBW     = 24.7;
     iOrder  = 1;
-    
     T       = 1/f_s;
     
     % compute the mid frequencies
-    f_c     = GetMidFrequencies (f_low, f_s/2, iNumBands, fEarQ, fBW);
+    f_c = GetMidFrequencies_I (f_low, f_s/2, iNumBands, fEarQ, fBW);
     
     % compute the coefficients
-    [afCoeffB, afCoeffA] = GetCoeffs (f_c, 1.019*2*pi*(((f_c/fEarQ).^iOrder + fBW^iOrder).^(1/iOrder)), T);
+    [afCoeffB, afCoeffA] = GetCoeffs_I (  f_c, ...
+        1.019*2*pi*(((f_c/fEarQ).^iOrder + fBW^iOrder).^(1/iOrder)), ...
+        T);
  
     % allocate output memory
-    X       = zeros(iNumBands, length(afAudioData));
+    X = zeros(iNumBands, length(afAudioData));
  
     % pre-processing: down-mixing
     if (size(afAudioData,2)> 1)
@@ -42,22 +43,22 @@ function [X, f_c] = ToolGammatoneFb(afAudioData, f_s, iNumBands, f_low)
  
     % do the (cascaded) filter process
     for (k = 1:iNumBands)
-        X(k,:)  = afAudioData;
+        X(k,:) = afAudioData;
         for (j = 1:4)
-            X(k,:)  = filter(afCoeffB(j,:,k), afCoeffA(j,:,k), X(k,:));
+            X(k,:) = filter(afCoeffB(j,:,k), afCoeffA(j,:,k), X(k,:));
         end
     end
 end
 
 %> see function ERBSpace.m from Slaneys Auditory Toolbox
-function [f_c] = GetMidFrequencies (f_low, f_hi, iNumBands, fEarQ, fBW)
-    f_c     = -(fEarQ*fBW) + exp((1:iNumBands)'*(-log(f_hi + fEarQ*fBW) + ...
+function [f_c] = GetMidFrequencies_I (f_low, f_hi, iNumBands, fEarQ, fBW)
+    f_c = -(fEarQ*fBW) + exp((1:iNumBands)'*(-log(f_hi + fEarQ*fBW) + ...
             log(f_low + fEarQ*fBW))/iNumBands) * (f_hi + fEarQ*fBW);
 end
 
 
 %> see function MakeERBFilters.m from Slaneys Auditory Toolbox
-function [afCoeffB, afCoeffA] = GetCoeffs (f_c, B, T)
+function [afCoeffB, afCoeffA] = GetCoeffs_I (f_c, B, T)
 
     fCos    = cos(2*f_c*pi*T);
     fSin    = sin(2*f_c*pi*T);

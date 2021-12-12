@@ -42,12 +42,12 @@ function [f, t] = ComputePitch (cPitchTrackName, afAudioData, f_s, afWindow, iBl
  
     afAudioData = [afAudioData; zeros(iBlockLength,1)];
     
-    if (IsSpectral(cPitchTrackName))
+    if (IsSpectral_I(cPitchTrackName))
         if (nargin < 4 || isempty(afWindow))
-            afWindow    = hann(iBlockLength,'periodic');
+            afWindow = hann(iBlockLength,'periodic');
         end
         
-        % compute FFT window function
+        % check FFT window function
         if (length(afWindow) ~= iBlockLength)
             error('window length mismatch');
         end        
@@ -61,21 +61,24 @@ function [f, t] = ComputePitch (cPitchTrackName, afAudioData, f_s, afWindow, iBl
         
         % magnitude spectrum
         X           = abs(X)*2/iBlockLength;
-        X([1 end],:)= X([1 end],:)/sqrt(2); %let's be pedantic about normalization
+        X([1 end],:)= X([1 end],:)/sqrt(2); % normalization
         
         % compute frequency
         f           = hPitchFunc(X, f_s);
-    end %if (IsSpectral(cPitchTrackName))
+    end %if (IsSpectral_I(cPitchTrackName))
     
-    if (IsTemporal(cPitchTrackName))
+    if (IsTemporal_I(cPitchTrackName))
         % compute frequency
-        [f,t]       = hPitchFunc(afAudioData, iBlockLength, iHopLength, f_s);
-    end %if (IsTemporal(cPitchTrackName))
+        [f,t]       = hPitchFunc(   afAudioData, ...
+                                    iBlockLength, ...
+                                    iHopLength, ...
+                                    f_s);
+    end %if (IsTemporal_I(cPitchTrackName))
 end
 
-function [bResult] = IsSpectral(cName)
-    bResult     = false;
-    iIdx        = strfind(cName, 'Spectral');
+function [bResult] = IsSpectral_I(cName)
+    bResult = false;
+    iIdx    = strfind(cName, 'Spectral');
     if (~isempty(iIdx))
         if (iIdx(1) == 1)
             bResult = true;
@@ -83,9 +86,9 @@ function [bResult] = IsSpectral(cName)
     end
 end
 
-function [bResult] = IsTemporal(cName)
-    bResult     = false;
-    iIdx        = strfind(cName, 'Time');
+function [bResult] = IsTemporal_I(cName)
+    bResult = false;
+    iIdx    = strfind(cName, 'Time');
     if (~isempty(iIdx))
         if (iIdx(1) == 1)
             bResult = true;

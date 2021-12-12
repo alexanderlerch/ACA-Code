@@ -4,7 +4,6 @@
 %> supported computation methods are:
 %>  'Corr',
 %>  'FFT',
-%>  'Hainsworth'
 %>
 %> @param afAudioData: time domain sample data, dimension channels X samples
 %> @param f_s: sample rate of audio data
@@ -40,10 +39,12 @@ function [T, Bpm] = ComputeBeatHisto (afAudioData, f_s, method, afWindow, iBlock
     afAudioData = ToolDownmix(afAudioData);
 
     % novelty function
-    [d,t,peaks] = ComputeNoveltyFunction ('Flux', afAudioData, f_s, afWindow, iBlockLength, iHopLength);
-%     tmp = zeros(size(d));
-%     tmp(peaks) = d(peaks);
-%     d = tmp;
+    [d,t,peaks] = ComputeNoveltyFunction (  'Flux', ...
+                                            afAudioData, ...
+                                            f_s, ...
+                                            afWindow, ...
+                                            iBlockLength, ...
+                                            iHopLength);
 
     if strcmp(method,'Corr')
         % compute autocorrelation
@@ -54,24 +55,24 @@ function [T, Bpm] = ComputeBeatHisto (afAudioData, f_s, method, afWindow, iBlock
         T       = fliplr (afCorr);
     else %if method == 'FFT'
         iLength = 65536;
-        iHop    = 1024;
         f_s     = f_s / iHopLength;
         if length(d)< 2*iLength
             d = [d zeros(1,2*iLength-length(d))];
         end
-        [X,f,tf] = spectrogram(  d,...
-                                    [hann(iLength); zeros(iLength,1)],...
-                                    iLength-iHopLength,...
-                                    2*iLength,...
-                                    f_s);
-        
-        T   = mean(abs(X),2);
-        T(1:8)= 0;
-        Bpm = f*60;
-        low = max(find(Bpm < 30));
-        hi = min(find(Bpm > 200));
-        T = T(low:hi);
-        Bpm = Bpm(low:hi);
+        [X,f,tf] = spectrogram( d, ...
+                                [hann(iLength); zeros(iLength,1)], ...
+                                iLength-iHopLength, ...
+                                2*iLength, ...
+                                f_s);
+ 
+        % adjust output BPM range
+        T       = mean(abs(X),2);
+        T(1:8)  = 0;
+        Bpm     = f*60;
+        lIdx    = max(find(Bpm < 30));
+        hIdx    = min(find(Bpm > 200));
+        T       = T(lIdx:hIdx);
+        Bpm     = Bpm(lIdx:hIdx);
         
     end
 end

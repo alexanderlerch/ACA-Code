@@ -40,13 +40,13 @@ function [p, P_res] = ToolViterbi(P_E,P_T,p_s,bUseLogLikelihood)
     else
         
         % initialization
-        P_E         = log(P_E); % hope for non-zero entries
-        P_T         = log(P_T); % hope for non-zero entries
-        p_s         = log(p_s); % hope for non-zero entries
-        I           = zeros(size(P_E));
-        P_res       = zeros(size(P_E));
+        P_E     = log(P_E); % hope for non-zero entries
+        P_T     = log(P_T); % hope for non-zero entries
+        p_s     = log(p_s); % hope for non-zero entries
+        I       = zeros(size(P_E));
+        P_res   = zeros(size(P_E));
 
-        P_res(:,1)  = P_E(:,1) + p_s; 
+        P_res(:,1) = P_E(:,1) + p_s; 
     
         % recursion
         for (n = 2:size(P_E,2))

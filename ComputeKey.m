@@ -20,7 +20,7 @@ function [cKey] = ComputeKey (afAudioData, f_s, afWindow, iBlockLength, iHopLeng
     end
 
     if (nargin < 3 || isempty(afWindow))
-        afWindow    = hann(iBlockLength,'periodic');
+        afWindow = hann(iBlockLength,'periodic');
     end
 
     % key names
@@ -54,6 +54,7 @@ function [cKey] = ComputeKey (afAudioData, f_s, afWindow, iBlockLength, iHopLeng
 
     % magnitude spectrum
     X           = abs(X)*2/iBlockLength;
+    X([1 end],:)= X([1 end],:)/sqrt(2); % normalization
 
     % instantaneous pitch chroma
     v_pc        = FeatureSpectralPitchChroma(X, f_s);

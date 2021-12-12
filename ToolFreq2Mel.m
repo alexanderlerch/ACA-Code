@@ -9,26 +9,26 @@
 function [mel] = ToolFreq2Mel(fInHz, cModel)
 
     if (nargin < 2)
-        cModel  = 'Fant';
+        cModel = 'Fant';
     end
 
     % set function handle
-    hPitchFunc  = str2func (['aca' cModel]);
+    hPitchFunc = str2func (['aca' cModel '_I']);
     
-    mel         = hPitchFunc(fInHz);
+    mel = hPitchFunc(fInHz);
 end
 
 % Fant
-function [mel] = acaFant(f)
-    mel         = 1000 * log2(1 + f/1000);
+function [mel] = acaFant_I(f)
+    mel = 1000 * log2(1 + f/1000);
 end
 
 % Shaughnessy
-function [mel] = acaShaughnessy(f)
-    mel         = 2595 * log10(1 + f/700);
+function [mel] = acaShaughnessy_I(f)
+    mel = 2595 * log10(1 + f/700);
 end
 
 % Umesh
-function [mel] = acaUmesh(f)
-    mel         = f./(2.4e-4*f + 0.741);
+function [mel] = acaUmesh_I(f)
+    mel = f./(2.4e-4*f + 0.741);
 end

@@ -18,6 +18,7 @@ function [vtpr] = FeatureSpectralTonalPowerRatio(X, f_s, G_T)
     % allocate memory
     vtpr    = zeros(1,size(X,2));
 
+    % convert to power spectrum
     X       = X.^2;
     fSum    = sum(X,1);
  

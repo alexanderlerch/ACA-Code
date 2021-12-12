@@ -3,7 +3,6 @@
 %>
 %> @param afAudioData: time domain sample data, dimension samples X channels
 %> @param f_s: sample rate of audio data
-%> @param afWindow: FFT window of length iBlockLength (default: hann), can be [] empty
 %> @param iBlockLength: internal block length (default: 4096 samples)
 %> @param iHopLength: internal hop length (default: 2048 samples)
 %>
@@ -29,7 +28,7 @@ function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (afAudioData, f_s, iB
         'g# min','a min','a# min','b min');
  
     % chord templates
-    [T] = generateTemplateMatrix ();
+    [T] = GenTemplateMatrix_I ();
     
     % pre-processing: normalization 
     afAudioData = ToolNormalizeAudio(afAudioData);
@@ -51,50 +50,60 @@ function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (afAudioData, f_s, iB
     [~, aiChordIdx(1,:)] = max(P_E,[],1);
     
     % transition probabilities
-    [P_T] = getChordTransProb ();
+    [P_T] = GetChordTransProb_I ();
 
     % compute path with Viterbi algorithm
     [aiChordIdx(2,:), ~] = ToolViterbi(P_E,...
                                 P_T,...
                                 ones(24,1)/24,...
                                 true);
-
+    % assign result string
     cChordLabel = deblank(cChords(aiChordIdx,:));
     % we want to start with 0!
     aiChordIdx = aiChordIdx - 1; 
 
 end
 
-function [T] = generateTemplateMatrix ()
+function [T] = GenTemplateMatrix_I ()
+    
+    % init: 12 major and 12 minor triads
     T = zeros(24,12);
+    
+    % all chord pitches are weighted equally
     T(1,[1 5 8]) = 1/3;
     T(13,[1 4 8]) = 1/3;
+    
+    % generate templates for all root notes
     for i = 1:11
         T(i+1,:) = circshift(T(i,:),1,2);
         T(i+13,:) = circshift(T(i+12,:),1,2);
     end
 end
 
-function [P_T] = getChordTransProb()
-    
+function [P_T] = GetChordTransProb_I()
+ 
+    % circle of fifth tonic distances
     circ = [0 -5 2 -3 4 -1 6 1 -4 3 -2 5,...
             -3 4 -1 6 1 -4 3 -2 5 0 -5 2];
         
     % set the circle radius and distance
     R = 1;
     d = .5;
-    
+
+    % generate key coordinates (mode in z)
     x = R*cos(2*pi*circ/12);
     y = R*sin(2*pi*circ/12);
     z = [d*ones(1,12),...
         zeros(1,12)];
-    
+ 
+    % compute key distances
     for (m = 1:size(x,2))
         for (n = 1:size(x,2))
             P_T(m,n) = sqrt((x(m)-x(n))^2 + (y(m)-y(n))^2 + (z(m)-z(n))^2);
         end
     end
- 
+
+    % convert distances into 'probabilities'
     P_T = .1+P_T;
     P_T = 1 - P_T/max(max(P_T));
     P_T = P_T ./ sum(P_T,1);

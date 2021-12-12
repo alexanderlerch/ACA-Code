@@ -61,16 +61,17 @@ function [W, H, err] = ToolSimpleNmf(V, iRank, iMaxIteration, fSparsity)
        
         %calculate variation between iterations
         count = count + 1;
-        err(count) = KlDivergence(V, (W*H)) + fSparsity * norm(H, 1);
+        err(count) = KlDivergence_I(V, (W*H)) + fSparsity * norm(H, 1);
     
         if (count >=2)               
-            if (abs(err(count) - err(count -1 )) / (err(1) - err(count) + realmin)) < 0.001
+            if (abs(err(count) - err(count -1 )) / ...
+                    (err(1) - err(count) + realmin)) < 0.001
                 break;
             end
         end   
     end
 end
 
-function [D] = KlDivergence(p, q)
+function [D] = KlDivergence_I(p, q)
     D = sum(sum( p.*( log(p + realmin) - log(q + realmin)) - p + q ));
 end

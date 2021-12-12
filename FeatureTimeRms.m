@@ -12,20 +12,20 @@
 % ======================================================================
 function [vrms, t] = FeatureTimeRms(x, iBlockLength, iHopLength, f_s)
 
-    T_i         = .3; 
-    alpha       = 1-exp(-2.2/f_s/T_i);
+    T_i     = .3; 
+    alpha   = 1-exp(-2.2/f_s/T_i);
 
     % number of results
-    iNumOfBlocks    = floor ((length(x)-iBlockLength)/iHopLength + 1);
+    iNumOfBlocks = floor ((length(x)-iBlockLength)/iHopLength + 1);
     
     % compute time stamps
-    t               = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
+    t       = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
     
     % allocate memory
-    vrms            = zeros(2,iNumOfBlocks);
+    vrms    = zeros(2,iNumOfBlocks);
 
     % single pole implementation
-    v_sp            = filter(alpha, [1 -(1-alpha)],x.^2);
+    v_sp    = filter(alpha, [1 -(1-alpha)],x.^2);
     
     for (n = 1:iNumOfBlocks)
         i_start     = (n-1)*iHopLength + 1;
@@ -37,8 +37,8 @@ function [vrms, t] = FeatureTimeRms(x, iBlockLength, iHopLength, f_s)
     end
 
     % convert to dB
-    epsilon         = 1e-5; %-100dB
+    epsilon = 1e-5; %-100dB
     
-    vrms(vrms < epsilon)    = epsilon;
-    vrms                    = 20*log10(vrms);
+    vrms(vrms < epsilon) = epsilon;
+    vrms = 20*log10(vrms);
 end

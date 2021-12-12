@@ -8,9 +8,10 @@
 % ======================================================================
 function [p] = ToolFreq2Midi(fInHz, f_A4)
 
+    % set tuning freq
     if (nargin < 2)
-        f_A4  = 440;
+        f_A4 = 440;
     end
 
-    p   = 69 + 12*log2(fInHz/f_A4);
+    p = 69 + 12*log2(fInHz/f_A4);
 end

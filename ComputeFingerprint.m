@@ -18,7 +18,7 @@ function [SubFingerprint, tf] = ComputeFingerprint (afAudioData, f_s)
     % pre-processing: down-mixing
     afAudioData = ToolDownmix(afAudioData);
 
-    % pre-processing: normalization (not really necessary here but shouldn't hurt)
+    % pre-processing: normalization (not really necessary here)
     afAudioData = ToolNormalizeAudio(afAudioData);
 
     % pre-processing: downsampling to target sample rate
@@ -27,7 +27,7 @@ function [SubFingerprint, tf] = ComputeFingerprint (afAudioData, f_s)
     end
 
     % initialization: generate transformation matrix for 33 frequency bands
-    H = genBands(iBlockLength, target_fs);
+    H = GenBands_I(iBlockLength, target_fs);
     
     % initialization: generate FFT window
     afWindow    = hann(iBlockLength,'periodic');
@@ -36,16 +36,16 @@ function [SubFingerprint, tf] = ComputeFingerprint (afAudioData, f_s)
     end                        
 
     % in the real world, we would do this block by block...
-    [X,f,tf]     = spectrogram(  afAudioData,...
-                                afWindow,...
-                                iBlockLength-iHopLength,...
-                                iBlockLength,...
-                                f_s);
+    [X,f,tf] = spectrogram( afAudioData,...
+                            afWindow,...
+                            iBlockLength-iHopLength,...
+                            iBlockLength,...
+                            f_s);
 
     % power spectrum
     X           = abs(X)*2/iBlockLength;
-    X([1 end],:)= X([1 end],:)/sqrt(2); %let's be pedantic about normalization
-    X = abs(X).^2;
+    X([1 end],:)= X([1 end],:)/sqrt(2); %normalization
+    X           = abs(X).^2;
     
     % group spectral bins in bands
     E = H*X;
@@ -59,7 +59,7 @@ function [SubFingerprint, tf] = ComputeFingerprint (afAudioData, f_s)
     SubFingerprint(SubFingerprint>0) = 1;
 end
 
-function [H] = genBands(iFFTLength, fs)
+function [H] = GenBands_I(iFFTLength, fs)
 
     % constants
     iNumBands = 33;

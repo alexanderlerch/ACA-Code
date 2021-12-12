@@ -16,17 +16,17 @@ function [vacf, t] = FeatureTimeAcfCoeff(x, iBlockLength, iHopLength, f_s, eta)
     % initialization
     % these values are arbitrary - adapt to your use case
     if (nargin < 5)
-        eta         = 20;
+        eta = 20;
     end
 
     % number of results
-    iNumOfBlocks    = floor ((length(x)-iBlockLength)/iHopLength + 1);
+    iNumOfBlocks = floor ((length(x)-iBlockLength)/iHopLength + 1);
     
     % compute time stamps
-    t               = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
+    t = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
     
     % allocate memory
-    vacf            = zeros(length(eta),iNumOfBlocks);
+    vacf = zeros(length(eta),iNumOfBlocks);
     
     for (n = 1:iNumOfBlocks)
         i_start   = (n-1)*iHopLength + 1;
@@ -38,9 +38,9 @@ function [vacf, t] = FeatureTimeAcfCoeff(x, iBlockLength, iHopLength, f_s, eta)
         else
             afCorr = xcorr(x(i_start:i_stop), 'coeff');
         end
-        afCorr      = afCorr((ceil((length(afCorr)/2))+1):end);
+        afCorr = afCorr((ceil((length(afCorr)/2))+1):end);
     
         % find the coefficients as requested
-        vacf(1:length(eta),n)   = afCorr(eta);
+        vacf(1:length(eta),n) = afCorr(eta);
     end
 end

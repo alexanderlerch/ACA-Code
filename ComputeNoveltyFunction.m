@@ -39,6 +39,7 @@ function [d, t, G_T, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData
         error('window length mismatch');
     end        
 
+    % parametrization of smoothing filters
     fSmoothLpLenInS = 0.07;
     fThreshLpLenInS = 0.14;
     iSmoothLpLen    = max(2,ceil(fSmoothLpLenInS*f_s/iHopLength));
@@ -59,7 +60,7 @@ function [d, t, G_T, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData
 
     % magnitude spectrum
     X           = abs(X)*2/iBlockLength;
-    X([1 end],:)= X([1 end],:)/sqrt(2); %let's be pedantic about normalization
+    X([1 end],:)= X([1 end],:)/sqrt(2); %  normalization
 
     % novelty function
     d       = hNoveltyFunc(X, f_s);

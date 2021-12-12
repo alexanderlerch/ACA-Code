@@ -12,25 +12,25 @@
 function [f, t] = PitchTimeZeroCrossings(x, iBlockLength, iHopLength, f_s)
 
     % number of results
-    iNumOfBlocks    = ceil (length(x)/iHopLength);
+    iNumOfBlocks  = ceil (length(x)/iHopLength);
     
     % compute time stamps
-    t               = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
+    t = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
     
     % allocate memory
-    f               = zeros(1,iNumOfBlocks);
+    f = zeros(1,iNumOfBlocks);
 
     for (n = 1:iNumOfBlocks)
-        i_start     = (n-1)*iHopLength + 1;
-        i_stop      = min(length(x),i_start + iBlockLength - 1);
+        i_start = (n-1)*iHopLength + 1;
+        i_stop  = min(length(x),i_start + iBlockLength - 1);
         
-        i_tmp       = diff(find(x(i_start:i_stop-1).*x(i_start+1:i_stop) < 0));
+        i_tmp   = diff(find(x(i_start:i_stop-1).*x(i_start+1:i_stop) < 0));
         %  average distance of zero crossings indicates half period
-        f(n)        = 2*mean(i_tmp); % or histogram max, ...
+        f(n)    = 2*mean(i_tmp); % or histogram max, ...
     end
  
     % convert to Hz
-    f                   = f_s ./ f;
+    f = f_s ./ f;
     
     % avoid NaN for silence frames
     f (isnan(f)) = 0;

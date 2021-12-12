@@ -22,25 +22,25 @@ function [clusterIdx,state] = ToolSimpleKmeans(FeatureMatrix, k, numMaxIter, pre
         rng(42); 
         
         % pick random observations as cluster means
-        state = computeClusterMeans(FeatureMatrix,...
+        state = computeClusterMeans_I(FeatureMatrix,...
             round(rand(1,size(FeatureMatrix,2))*(k-1))+1, k);
     end
-    range       = [min(FeatureMatrix,[],2) max(FeatureMatrix,[],2)];
+    range = [min(FeatureMatrix,[],2) max(FeatureMatrix,[],2)];
     
     % assign observations to clusters
-    clusterIdx  = assignClusterLabels(FeatureMatrix,state);
+    clusterIdx = assignClusterLabels_I(FeatureMatrix,state);
     
     for i=1:numMaxIter
         prevState = state;
         
         % update means
-        state = computeClusterMeans(FeatureMatrix,clusterIdx,k);
+        state = computeClusterMeans_I(FeatureMatrix,clusterIdx,k);
         
         % reinitialize empty clusters
-        state = reinitState(state, clusterIdx, k, range);
+        state = reinitState_I(state, clusterIdx, k, range);
         
         % assign observations to clusters
-        clusterIdx  = assignClusterLabels(FeatureMatrix,state);
+        clusterIdx = assignClusterLabels_I(FeatureMatrix,state);
         
         % if we have converged, break
         if (max(sum(abs(state.m-prevState.m)))==0)
@@ -49,7 +49,7 @@ function [clusterIdx,state] = ToolSimpleKmeans(FeatureMatrix, k, numMaxIter, pre
     end
 end
 
-function [clusterIdx]  = assignClusterLabels(FeatureMatrix,state)
+function [clusterIdx]  = assignClusterLabels_I(FeatureMatrix,state)
     % compute distance to all points
     for (k=1:length(state.m))
         D(k,:) = sqrt(sum((repmat(state.m(:,k),1,size(FeatureMatrix,2))-FeatureMatrix).^2,1));
@@ -59,7 +59,7 @@ function [clusterIdx]  = assignClusterLabels(FeatureMatrix,state)
     [dummy,clusterIdx] = min(D,[],1);
 end
 
-function [state] = computeClusterMeans(FeatureMatrix,clusterIdx,K)
+function [state] = computeClusterMeans_I(FeatureMatrix,clusterIdx,K)
     m = zeros(size(FeatureMatrix,1), K);
     for (k=1:K)
         if~(isempty(find(clusterIdx==k)))
@@ -69,7 +69,7 @@ function [state] = computeClusterMeans(FeatureMatrix,clusterIdx,K)
     state = struct('m',m);
 end
 
-function  [state] = reinitState(state, clusterIdx, K, range)
+function  [state] = reinitState_I(state, clusterIdx, K, range)
     for (k=1:K)
         if(isempty(find(clusterIdx==k)))
             state.m(:,k) = rand(size(state,1),1).*(range(:,2)-range(:,1)) + range(:,1);

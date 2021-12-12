@@ -36,7 +36,7 @@
 function [v, t] = ComputeFeature (cFeatureName, afAudioData, f_s, afWindow, iBlockLength, iHopLength)
 
     % set feature function handle
-    hFeatureFunc    = str2func (['Feature' cFeatureName]);
+    hFeatureFunc = str2func (['Feature' cFeatureName]);
 
     % set default parameters if necessary
     if (nargin < 6)
@@ -54,9 +54,9 @@ function [v, t] = ComputeFeature (cFeatureName, afAudioData, f_s, afWindow, iBlo
  
     afAudioData = [afAudioData; zeros(iBlockLength,1)];
     
-    if (IsSpectral(cFeatureName))
+    if (IsSpectral_I(cFeatureName))
         if (nargin < 4 || isempty(afWindow))
-            afWindow    = hann(iBlockLength,'periodic');
+            afWindow = hann(iBlockLength,'periodic');
         end
         
         % compute FFT window function
@@ -65,27 +65,30 @@ function [v, t] = ComputeFeature (cFeatureName, afAudioData, f_s, afWindow, iBlo
         end                        
 
         % in the real world, we would do this block by block...
-        [X,f,t]     = spectrogram(  afAudioData,...
-                                    afWindow,...
-                                    iBlockLength-iHopLength,...
-                                    iBlockLength,...
-                                    f_s);
+        [X,f,t] = spectrogram(  afAudioData,...
+                                afWindow,...
+                                iBlockLength-iHopLength,...
+                                iBlockLength,...
+                                f_s);
         
         % magnitude spectrum
         X           = abs(X)*2/iBlockLength;
-        X([1 end],:)= X([1 end],:)/sqrt(2); %let's be pedantic about normalization
+        X([1 end],:)= X([1 end],:)/sqrt(2); % normalization
         
         % compute feature
-        v           = hFeatureFunc(X, f_s);
-    end %if (IsSpectral(cFeatureName))
+        v = hFeatureFunc(X, f_s);
+    end %if (IsSpectral_I(cFeatureName))
     
-    if (IsTemporal(cFeatureName))
+    if (IsTemporal_I(cFeatureName))
         % compute feature
-        [v,t]       = hFeatureFunc(afAudioData, iBlockLength, iHopLength, f_s);
-    end %if (IsTemporal(cFeatureName))
+        [v,t] = hFeatureFunc(   afAudioData, ...
+                                iBlockLength, ...
+                                iHopLength, ...
+                                f_s);
+    end %if (IsTemporal_I(cFeatureName))
 end
 
-function [bResult] = IsSpectral(cName)
+function [bResult] = IsSpectral_I(cName)
     bResult     = false;
     iIdx        = strfind(cName, 'Spectral');
     if (~isempty(iIdx))
@@ -95,7 +98,7 @@ function [bResult] = IsSpectral(cName)
     end
 end
 
-function [bResult] = IsTemporal(cName)
+function [bResult] = IsTemporal_I(cName)
     bResult     = false;
     iIdx        = strfind(cName, 'Time');
     if (~isempty(iIdx))

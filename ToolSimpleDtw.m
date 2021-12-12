@@ -10,12 +10,12 @@
 function [p, C] = ToolSimpleDtw(D)
  
     % init directions for back-tracking [diag, vert, hori]
-    iDec            = [-1 -1; -1 0; 0 -1]; 
+    iDec    = [-1 -1; -1 0; 0 -1]; 
 
     % cost initialization
-    C               = zeros(size(D));
-    C(1,:)          = cumsum(D(1,:));
-    C(:,1)          = cumsum(D(:,1));
+    C       = zeros(size(D));
+    C(1,:)  = cumsum(D(1,:));
+    C(:,1)  = cumsum(D(:,1));
 
     % traceback initialization
     DeltaP          = zeros(size(D));
@@ -26,18 +26,20 @@ function [p, C] = ToolSimpleDtw(D)
     for (n_A = 2:size(D,1))
         for (n_B = 2:size(D,2))
             % find preceding min (diag, column, row)
-            [fC_min, DeltaP(n_A,n_B)]   = min([C(n_A-1,n_B-1), C(n_A-1,n_B), C(n_A,n_B-1)]);
-            C(n_A, n_B)                 = D(n_A,n_B) + fC_min;
+            [fC_min, DeltaP(n_A,n_B)] = min([C(n_A-1,n_B-1), ...
+                                            C(n_A-1,n_B), ...
+                                            C(n_A,n_B-1)]);
+            C(n_A, n_B) = D(n_A,n_B) + fC_min;
         end
     end
 
     % traceback
-    p   = size(D);  % start with the last element
-    n   = [size(D,1), size(D,2)]; %[n_A, n_B];
+    p = size(D);  % start with the last element
+    n = [size(D,1), size(D,2)]; %[n_A, n_B];
     while ((n(1) > 1) || (n(2) > 1))
         n = n + iDec(DeltaP(n(1),n(2)),:);
 
         % update path (final length unknown)
-        p   = [n; p];
+        p = [n; p];
     end   
 end
