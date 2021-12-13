@@ -57,6 +57,7 @@ function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (afAudioData, f_s, iB
                                 P_T,...
                                 ones(24,1)/24,...
                                 true);
+                            
     % assign result string
     cChordLabel = deblank(cChords(aiChordIdx,:));
     % we want to start with 0!

@@ -9,6 +9,7 @@
 % ======================================================================
 function [vtf] = FeatureSpectralFlatness (X, f_s)
 
+    % replace product sum with log/exp
     XLog    = log(X+1e-20);
     vtf     = exp(mean(XLog,1)) ./ (mean(X,1));
    

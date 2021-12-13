@@ -26,7 +26,8 @@ function [vrms, t] = FeatureTimeRms(x, iBlockLength, iHopLength, f_s)
 
     % single pole implementation
     v_sp    = filter(alpha, [1 -(1-alpha)],x.^2);
-    
+
+    % per block standard implementation
     for (n = 1:iNumOfBlocks)
         i_start     = (n-1)*iHopLength + 1;
         i_stop      = min(length(x),i_start + iBlockLength - 1);

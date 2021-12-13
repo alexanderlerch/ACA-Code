@@ -40,7 +40,7 @@ function [W, H, err] = ToolSimpleNmf(V, iRank, iMaxIteration, fSparsity)
     count = 0;
     rep   = ones(iFreq, iFrames);
 
-    %start iteration
+    % iteration
     while (count < iMaxIteration)  
     
         % current estimate
