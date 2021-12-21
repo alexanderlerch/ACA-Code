@@ -17,7 +17,7 @@ function [vsd] = FeatureSpectralDecrease (X, f_s)
     % compute slope
     vsd     = (kinv*(X-repmat(X(1,:),size(X,1),1)))./sum(X(2:end,:),1);
        
-   % avoid NaN for silence frames
+    % avoid NaN for silence frames
     vsd (sum(X(2:end,:),1) == 0) = 0;
 
 end
