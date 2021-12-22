@@ -30,6 +30,6 @@ function [Acc, conf_mat] = ToolLooCrossVal(FeatureMatrix, ClassIdx)
         end
     end
  
-    % compute overall (macro) accuracy
+    % compute overall (micro) accuracy
     Acc = TP/length(ClassIdx);
 end
