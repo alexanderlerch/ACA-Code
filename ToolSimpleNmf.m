@@ -10,7 +10,7 @@
 %> @retval H activation matrix
 %> @retval err loss function result
 % ======================================================================
-function [W, H, err] = ToolSimpleNmf(V, iRank, iMaxIteration, fSparsity)
+function [W, H, err] = ToolSimpleNmf(X, iRank, iMaxIteration, fSparsity)
 
     if nargin < 4
         fSparsity = 0;
@@ -21,10 +21,10 @@ function [W, H, err] = ToolSimpleNmf(V, iRank, iMaxIteration, fSparsity)
     rng(42);
     
     % avoid zero input
-    V = V + realmin;
+    X = X + realmin;
 
     % initialization
-    [iFreq, iFrames] = size(V);
+    [iFreq, iFrames] = size(X);
     err = zeros(1,iFrames);
     W_update = 1;
     H_update = 1;
@@ -44,14 +44,14 @@ function [W, H, err] = ToolSimpleNmf(V, iRank, iMaxIteration, fSparsity)
     while (count < iMaxIteration)  
     
         % current estimate
-        approx = W*H; 
+        X_hat = W*H; 
  
         % update
         if H_update
-            H = H .* (W'* (V./approx))./(W'*rep);
+            H = H .* (W'* (X./X_hat))./(W'*rep);
         end
         if W_update
-            W = W .* ((V./approx)*H')./(rep*H');
+            W = W .* ((X./X_hat)*H')./(rep*H');
         end
     
         %normalize
@@ -61,7 +61,7 @@ function [W, H, err] = ToolSimpleNmf(V, iRank, iMaxIteration, fSparsity)
        
         %calculate variation between iterations
         count = count + 1;
-        err(count) = KlDivergence_I(V, (W*H)) + fSparsity * norm(H, 1);
+        err(count) = KlDivergence_I(X, (W*H)) + fSparsity * norm(H, 1);
     
         if (count >=2)               
             if (abs(err(count) - err(count -1 )) / ...
