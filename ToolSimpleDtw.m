@@ -9,9 +9,6 @@
 % ======================================================================
 function [p, C] = ToolSimpleDtw(D)
  
-    % init directions for back-tracking [diag, vert, hori]
-    iDec    = [-1 -1; -1 0; 0 -1]; 
-
     % cost initialization
     C       = zeros(size(D));
     C(1,:)  = cumsum(D(1,:));
@@ -21,6 +18,9 @@ function [p, C] = ToolSimpleDtw(D)
     DeltaP          = zeros(size(D));
     DeltaP(1,2:end) = 3; % (0,-1)
     DeltaP(2:end,1) = 2; % (-1,0)
+
+    % init directions for back-tracking [diag, vert, hori]
+    iDec    = [-1 -1; -1 0; 0 -1]; 
     
     % recursion
     for (n_A = 2:size(D,1))
