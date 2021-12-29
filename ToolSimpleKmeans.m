@@ -1,5 +1,5 @@
 % ======================================================================
-%> @brief knn classifier
+%> @brief kmeans clustering
 %>
 %> @param FeatureMatrix: features for all train observations (dimension iNumFeatures x iNumObservations)
 %> @param k: number of clusters
