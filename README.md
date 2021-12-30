@@ -1,3 +1,7 @@
+![GitHub](https://img.shields.io/github/license/alexanderlerch/ACA-Code)
+![GitHub top language](https://img.shields.io/github/languages/top/alexanderlerch/ACA-Code)
+![GitHub issues](https://img.shields.io/github/issues-raw/alexanderlerch/ACA-Code)
+
 Matlab sources accompanying the book
 An Introduction to Audio Content Analysis - 
 Applications in Signal Processing and Music Informatics
