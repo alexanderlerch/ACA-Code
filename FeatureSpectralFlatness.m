@@ -14,7 +14,7 @@ function [vtf] = FeatureSpectralFlatness (X, f_s)
     vtf     = exp(mean(XLog,1)) ./ (mean(X,1));
    
     % avoid NaN for silence frames
-    vtf (sum(X,1) == 0) = 0;
+    vtf (min(X,[],1) == 0) = 0;
     
 end
 
