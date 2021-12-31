@@ -9,5 +9,7 @@ function [x_norm] = ToolNormalizeAudio(x)
     
     if (length(x)> 1)
         x_norm = x/max(abs(x),[],'all');
+    else
+        x_norm = x;
     end
 end
