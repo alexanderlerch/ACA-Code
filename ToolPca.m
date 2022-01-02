@@ -1,17 +1,23 @@
 % ======================================================================
 %> @brief principal component analysis
 %>
-%> @param V: input matrix (observations X features)
+%> @param V: input matrix (features X observations)
 %>
+%> @retval U_pc transformed features (score)
 %> @retval T transformation matrix (loading)
-%> @retval u_pc transformed features (score)
-%> @retval ev eigenvalues (latent)
+%> @retval eigenvalues (latent)
 % ======================================================================
-function [T,u_pc,ev] = ToolPca(V)
+function [U_pc,T,eigenvalues] = ToolPca(V)
 
-    Cov     = (V' * V)/size(V,1);
-    [U,D,T] = svd(Cov);
-    u_pc    = V*T; 
-    ev      = diag(D); 
+    % covariance
+    cov_VV = cov(V');
+    
+    % svd
+    [~,D,T] = svd(cov_VV);
+    
+    % features to components
+    U_pc    = T'*V; 
+    
+    eigenvalues = diag(D); 
 end
 
