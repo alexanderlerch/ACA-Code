@@ -1,25 +1,36 @@
 % ======================================================================
 %> @brief Leave One Out Cross Validation with Nearest Neighbor Classifier
 %>
-%> @param FeatureMatrix: features (dimension iNumFeatures x iNumObservations)
+%> @param V: features (dimension iNumFeatures x iNumObservations)
 %> @param ClassIdx: vector with class indices (length iNumObservations)
+%> @param iNumFeatures2Select: target number of features (optional)
 %>
-%> @retval Acc overall accuracy after Cross-Validation
+%> @retval selFeatureIdx vector with ordered feature indices (length: iNumFeatures2Select)
+%> @retval AccPerSubset accuracy for each subset
 % ======================================================================
-function [AccPerSubset, selectedFeatureIdx] = ToolSeqFeatureSel(FeatureMatrix, ClassIdx, iNumFeatures2Select)
+function [selFeatureIdx, AccPerSubset] = ToolSeqFeatureSel(V, ClassIdx, iNumFeatures2Select)
 
-    iNumFeatures = size(FeatureMatrix,1);
+    iNumFeatures = size(V,1);
     if (nargin < 3)
         iNumFeatures2Select = iNumFeatures;
     end
 
     % initialize
-    selectedFeatureIdx  = -1*ones(1,iNumFeatures2Select);
+    selFeatureIdx       = [];
     unselectedFeatures  = ones(1,iNumFeatures);
     AccPerSubset        = zeros(1,iNumFeatures);
+
+    for f = 1:iNumFeatures
+        % accuracy of selected features plus current feature f
+        acc(f) = ToolLooCrossVal(V(f,:), ClassIdx);
+    end
+    [maxacc,maxidx] = max(acc);
+    selFeatureIdx(1) = maxidx;
+    unselectedFeatures(maxidx) = 0;
+    AccPerSubset(1) = maxacc;
     
     % iterate until target number of features is reached
-    for (i = 1:iNumFeatures2Select)
+    for (i = 2:iNumFeatures2Select)
         acc = zeros(1,iNumFeatures);
         
         % iterate over all features not yet selected
@@ -27,7 +38,7 @@ function [AccPerSubset, selectedFeatureIdx] = ToolSeqFeatureSel(FeatureMatrix, C
             if (unselectedFeatures(f) > 0)
                 % accuracy of selected features plus current feature f
                 acc(f) = ToolLooCrossVal(...
-                    FeatureMatrix([selectedFeatureIdx(1:i) f],:), ...
+                    V([selFeatureIdx(1:(i-1)) f],:), ...
                     ClassIdx);
             else
                 acc(f) = -1;
@@ -37,9 +48,9 @@ function [AccPerSubset, selectedFeatureIdx] = ToolSeqFeatureSel(FeatureMatrix, C
         
         % identify feature maximizing the accuracy
         % move feature from unselected to selected
-        [maxacc,maxidx]             = max(acc);
-        selectedFeatureIdx(i)       = maxidx;
-        unselectedFeatures(maxidx)  = 0;
-        AccPerSubset(i)             = maxacc;
+        [maxacc,maxidx] = max(acc);
+        selFeatureIdx(i) = maxidx;
+        unselectedFeatures(maxidx) = 0;
+        AccPerSubset(i) = maxacc;
     end
 end
