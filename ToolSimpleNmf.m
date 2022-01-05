@@ -1,7 +1,7 @@
 % ======================================================================
 %> @brief nmf implementation inspired by https://github.com/cwu307/NmfDrumToolbox/blob/master/src/PfNmf.m
 %>
-%> @param V: non-negative matrix to factorize (usually ifreq x iObservations)
+%> @param X: non-negative matrix to factorize (usually ifreq x iObservations)
 %> @param iRank: nmf rank
 %> @param iMaxIteration: maximum number of iterations (default: 300)
 %> @param fSparsity: sparsity weight (default: 0)
@@ -18,19 +18,21 @@ function [W, H, err] = ToolSimpleNmf(X, iRank, iMaxIteration, fSparsity)
     if nargin < 3
         iMaxIteration = 300;
     end
-    rng(42);
+    %rng(42);
     
     % avoid zero input
     X = X + realmin;
 
     % initialization
     [iFreq, iFrames] = size(X);
-    err = zeros(1,iFrames);
-    W_update = 1;
-    H_update = 1;
+    err = zeros(1,iMaxIteration);
+    bUpdateW = true;
+    bUpdateH = true;
 
     W = rand(iFreq, iRank);
     H = rand(iRank, iFrames);
+%     W = ones(iFreq, iRank);
+%     H = ones(iRank, iFrames);
 
     %normalize W / H matrix
     for i = 1:iRank
@@ -47,10 +49,10 @@ function [W, H, err] = ToolSimpleNmf(X, iRank, iMaxIteration, fSparsity)
         X_hat = W*H; 
  
         % update
-        if H_update
+        if bUpdateH
             H = H .* (W'* (X./X_hat))./(W'*rep);
         end
-        if W_update
+        if bUpdateW
             W = W .* ((X./X_hat)*H')./(rep*H');
         end
     
@@ -70,6 +72,7 @@ function [W, H, err] = ToolSimpleNmf(X, iRank, iMaxIteration, fSparsity)
             end
         end   
     end
+    err = err(1:count)
 end
 
 function [D] = KlDivergence_I(p, q)
