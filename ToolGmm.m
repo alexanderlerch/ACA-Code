@@ -6,9 +6,11 @@
 %> @param numMaxIter: maximum number of iterations (stop if not converged before)
 %> @param prevState: internal state that can be stored to continue clustering later
 %>
-%> @retval state result containinginternal state (only if needed)
+%> @retval mu means
+%> @retval sigma standard deviations
+%> @retval state result containing internal state (if needed)
 % ======================================================================
-function [mu,sigma,state] = ToolGmm(FeatureMatrix, k, numMaxIter, prevState)
+function [mu,sigma,state] = ToolGmm(V, k, numMaxIter, prevState)
     
     if (nargin < 3)
         numMaxIter  = 1000;
@@ -17,17 +19,17 @@ function [mu,sigma,state] = ToolGmm(FeatureMatrix, k, numMaxIter, prevState)
         state = prevState;
     else
         % initialize state
-        state = initState_I(FeatureMatrix, k);
+        state = initState_I(V, k);
     end
     
-    for i=1:numMaxIter
+    for j=1:numMaxIter
         prevState = state;
         
         % compute weighted gaussian 
-        p = computeProb_I(FeatureMatrix, state);
+        p = computeProb_I(V, state);
         
         % update clusters
-        state = updateGaussians_I(FeatureMatrix,p,state);
+        state = updateGaussians_I(V,p,state);
          
         % if we have converged, break
         if (max(sum(abs(state.m-prevState.m))) <= 1e-20)
@@ -59,7 +61,7 @@ function [state] = updateGaussians_I(FeatureMatrix,p,state)
         for n = 1:size(FeatureMatrix,2)
             s = s + p(n,k) * (F(:,n) * F(:,n)');
         end
-    state.sigma(:,:,k) = s / sum(p(:,k));
+        state.sigma(:,:,k) = s / sum(p(:,k));
     end
 end
 
@@ -79,7 +81,7 @@ function [ p ] = computeProb_I(FeatureMatrix, state)
     end
     
     % norm over clusters
-    p = p ./ repmat(sum(p,2),1,2);
+    p = p ./ repmat(sum(p,2),1,K);
 end
 
 function [state] = initState_I(FeatureMatrix,K)
