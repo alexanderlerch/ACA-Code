@@ -1,8 +1,8 @@
 % ======================================================================
-%> @brief computes path through a distance matrix with Viterbi
+%> @brief computes path through a probability matrix with Viterbi
 %>
 %> @param P_E: emmission probability matrix (S X N)
-%> @param P_E: transition probability matrix (S X S)
+%> @param P_T: transition probability matrix (S X S)
 %> @param p_s: start probability vector (S X 1)
 %> @param bUseLogLikelihood: flag (default: false)
 %>
@@ -29,16 +29,7 @@ function [p, P_res] = ToolViterbi(P_E,P_T,p_s,bUseLogLikelihood)
                 P_res(s,n)      = P_E(s,n) * p_max;
             end
         end
-        
-        % traceback
-        p = zeros(1,size(P_E,2));  
-        % start with the last element, then count down
-        [prob,p(end)] = max(P_res(:,end));
-        for n = size(P_E,2)-1:-1:1
-            p(n) = I(p(n+1),n+1);
-        end   
     else
-        
         % initialization
         P_E     = log(P_E); % hope for non-zero entries
         P_T     = log(P_T); % hope for non-zero entries
@@ -56,13 +47,13 @@ function [p, P_res] = ToolViterbi(P_E,P_T,p_s,bUseLogLikelihood)
                 P_res(s,n)      = P_E(s,n) + p_max;
             end
         end
-        
-        % traceback
-        p = zeros(1,size(P_E,2));  
-        % start with the last element, the count down
-        [prob,p(end)] = max(P_res(:,end));
-        for n = size(P_E,2)-1:-1:1
-            p(n) = I(p(n+1),n+1);
-        end   
     end
+        
+    % traceback
+    p = zeros(1,size(P_E,2));  
+    % start with the last element, then count down
+    [prob,p(end)] = max(P_res(:,end));
+    for n = size(P_E,2)-1:-1:1
+        p(n) = I(p(n+1),n+1);
+    end   
 end
