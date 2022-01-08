@@ -7,7 +7,7 @@
 %> @param iHopLength: hop length in samples
 %> @param f_s: sample rate of audio data (unused)
 %>
-%> @retval vrms root mean square
+%> @retval vrms root mean square (row 1: block-based rms, row 2: single pole approx)
 %> @retval t time stamp
 % ======================================================================
 function [vrms, t] = FeatureTimeRms(x, iBlockLength, iHopLength, f_s)
