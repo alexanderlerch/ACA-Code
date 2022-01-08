@@ -28,7 +28,10 @@ function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (afAudioData, f_s, iB
         'g# min','a min','a# min','b min');
  
     % chord templates
-    [T] = GenTemplateMatrix_I ();
+    [T] = generateTemplateMatrix_I ();
+    
+    % transition probabilities
+    [P_T] = getChordTransProb_I ();
     
     % pre-processing: normalization 
     afAudioData = ToolNormalizeAudio(afAudioData);
@@ -48,14 +51,11 @@ function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (afAudioData, f_s, iB
     % assign series of labels/indices starting with 0
     aiChordIdx = zeros(2,length(t));
     [~, aiChordIdx(1,:)] = max(P_E,[],1);
-    
-    % transition probabilities
-    [P_T] = GetChordTransProb_I ();
 
     % compute path with Viterbi algorithm
     [aiChordIdx(2,:), ~] = ToolViterbi(P_E,...
                                 P_T,...
-                                ones(24,1)/24,...
+                                ones(length(cChords),1)/length(cChords),...
                                 true);
                             
     % assign result string
@@ -65,7 +65,7 @@ function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (afAudioData, f_s, iB
 
 end
 
-function [T] = GenTemplateMatrix_I ()
+function [T] = generateTemplateMatrix_I ()
     
     % init: 12 major and 12 minor triads
     T = zeros(24,12);
@@ -81,7 +81,7 @@ function [T] = GenTemplateMatrix_I ()
     end
 end
 
-function [P_T] = GetChordTransProb_I()
+function [P_T] = getChordTransProb_I()
  
     % circle of fifth tonic distances
     circ = [0 -5 2 -3 4 -1 6 1 -4 3 -2 5,...
@@ -106,6 +106,6 @@ function [P_T] = GetChordTransProb_I()
 
     % convert distances into 'probabilities'
     P_T = .1+P_T;
-    P_T = 1 - P_T/max(max(P_T));
+    P_T = 1 - P_T/(.1+max(max(P_T)));
     P_T = P_T ./ sum(P_T,1);
 end
