@@ -31,10 +31,8 @@ function [W, H, err] = ToolSimpleNmf(X, iRank, iMaxIteration, fSparsity)
 
     W = rand(iFreq, iRank);
     H = rand(iRank, iFrames);
-%     W = ones(iFreq, iRank);
-%     H = ones(iRank, iFrames);
 
-    %normalize W / H matrix
+    % normalize W / H matrix
     for i = 1:iRank
         W(:,i) = W(:,i)./(norm(W(:,i),1));
     end
@@ -72,7 +70,7 @@ function [W, H, err] = ToolSimpleNmf(X, iRank, iMaxIteration, fSparsity)
             end
         end   
     end
-    err = err(1:count)
+    err = err(1:count);
 end
 
 function [D] = KlDivergence_I(p, q)
