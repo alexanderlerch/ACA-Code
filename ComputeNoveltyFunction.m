@@ -7,7 +7,7 @@
 %>  'Hainsworth'
 %>
 %> @param cNoveltyName: name of the novelty measure
-%> @param afAudioData: time domain sample data, dimension channels X samples
+%> @param x: time domain sample data, dimension channels X samples
 %> @param f_s: sample rate of audio data
 %> @param afWindow: FFT window of length iBlockLength (default: hann), can be [] empty
 %> @param iBlockLength: internal block length (default: 4096 samples)
@@ -18,20 +18,20 @@
 %> @retval G_T threshold function
 %> @retval iPeaks indices of picked onset times
 % ======================================================================
-function [d, t, G_T, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData, f_s, afWindow, iBlockLength, iHopLength)
+function [d, t, G_T, iPeaks] = ComputeNoveltyFunction (cNoveltyName, x, f_s, afWindow, iBlockLength, iHopLength)
 
     % set function handle
-    hNoveltyFunc    = str2func (['Novelty' cNoveltyName]);
+    hNoveltyFunc = str2func (['Novelty' cNoveltyName]);
 
     % set default parameters if necessary
     if (nargin < 6)
-        iHopLength      = 512;
+        iHopLength = 512;
     end
     if (nargin < 5)
-        iBlockLength    = 4096;
+        iBlockLength = 4096;
     end
     if (nargin < 4 || isempty(afWindow))
-        afWindow    = hann(iBlockLength,'periodic');
+        afWindow = hann(iBlockLength, 'periodic');
     end
 
     % compute FFT window function
@@ -42,40 +42,36 @@ function [d, t, G_T, iPeaks] = ComputeNoveltyFunction (cNoveltyName, afAudioData
     % parametrization of smoothing filters
     fSmoothLpLenInS = 0.07;
     fThreshLpLenInS = 0.14;
-    iSmoothLpLen    = max(2,ceil(fSmoothLpLenInS*f_s/iHopLength));
-    iThreshLpLen    = max(2,ceil(fThreshLpLenInS*f_s/iHopLength));
+    iSmoothLpLen = max(2, ceil(fSmoothLpLenInS * f_s / iHopLength));
+    iThreshLpLen = max(2, ceil(fThreshLpLenInS * f_s / iHopLength));
 
     % pre-processing: down-mixing
-    afAudioData = ToolDownmix(afAudioData);
+    x = ToolDownmix(x);
 
     % pre-processing: normalization (not necessary for many features)
-    afAudioData = ToolNormalizeAudio(afAudioData);
+    x = ToolNormalizeAudio(x);
 
     % in the real world, we would do this block by block...
-    [X,f,t]     = spectrogram(  afAudioData,...
-                                afWindow,...
-                                iBlockLength-iHopLength,...
-                                iBlockLength,...
-                                f_s);
-
-    % magnitude spectrum
-    X           = abs(X)*2/iBlockLength;
-    X([1 end],:)= X([1 end],:)/sqrt(2); %  normalization
+    [X, f, t] = ComputeSpectrogram(x, ...
+                                f_s, ...
+                                afWindow, ...
+                                iBlockLength, ...
+                                iHopLength);
 
     % novelty function
-    d       = hNoveltyFunc(X, f_s);
+    d = hNoveltyFunc(X, f_s);
     
     % smooth novelty function
-    b       = ones(iSmoothLpLen,1)/iSmoothLpLen;
-    d       = filtfilt (b,1,d);
-    d(d<0)  = 0;
+    b = ones(iSmoothLpLen,1)/iSmoothLpLen;
+    d = filtfilt (b, 1, d);
+    d(d<0) = 0;
     
     % compute threshold
-    iLen    = min(iThreshLpLen,floor(length(d)/3));
-    b       = ones(iLen,1)/iLen;
-    G_T     = .4*mean(d(2:end)) + filtfilt (b,1,d);
+    iLen = min(iThreshLpLen, floor(length(d) / 3));
+    b   = ones(iLen, 1) / iLen;
+    G_T = .4*mean(d(2:end)) + filtfilt (b, 1, d);
     
-    [fPeaks,iPeaks] = findpeaks(max(0,d-G_T)); 
+    [fPeaks,iPeaks] = findpeaks(max(0, d - G_T)); 
     
 end
 

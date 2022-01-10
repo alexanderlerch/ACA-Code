@@ -6,12 +6,14 @@
 %> @param afWindow: FFT window of length iBlockLength (default: hann), can be [] empty
 %> @param iBlockLength: internal block length (default: 4096 samples)
 %> @param iHopLength: internal hop length (default: 2048 samples)
+%> @param bNormalize: normalize input audio (default: True)
+%> @param bMagnitude: return magnitude instead of complex spectrum (default: True)
 %>
 %> @retval X spectrogram
 %> @retval f frequency bands
 %> @retval t time stamps
 % ======================================================================
-function [X, f, t] = ComputeSpectrogram (x, f_s, afWindow, iBlockLength, iHopLength, bNormalize)
+function [X, f, t] = ComputeSpectrogram (x, f_s, afWindow, iBlockLength, iHopLength, bNormalize, bMagnitude)
 
     % set default parameters if necessary
     if (nargin < 6)
@@ -53,9 +55,14 @@ function [X, f, t] = ComputeSpectrogram (x, f_s, afWindow, iBlockLength, iHopLen
 
     for n=1:size(X,2)
         tmp = fft(x_b(n,:)' .* afWindow);
-        X(:,n) = abs(tmp(1:size(X,1))) * 2 / iBlockLength;
+        
+        if bMagnitude
+            X(:,n) = abs(tmp(1:size(X,1))) * 2 / iBlockLength;
+        else
+            X(:,n) = (tmp(1:size(X,1))) * 2 / iBlockLength;
+        end            
     end
     
     % normalization
-    X([1 end],:)= X([1 end],:)/sqrt(2);
+    X([1 end],:) = X([1 end],:) / sqrt(2);
 end

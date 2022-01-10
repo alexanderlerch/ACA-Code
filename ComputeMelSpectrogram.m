@@ -18,28 +18,28 @@ function [M, f_c, t] = ComputeMelSpectrogram (x, f_s, bLogarithmic, afWindow, iB
 
     % set default parameters if necessary
     if (nargin < 8)
-        fMax            = f_s/2;
+        fMax = f_s/2;
     end
     if (nargin < 7)
-        iNumMelBands    = 128;
+        iNumMelBands = 128;
     end
     if (nargin < 6)
-        iHopLength      = 2048;
+        iHopLength = 2048;
     end
     if (nargin < 5)
-        iBlockLength    = 4096;
+        iBlockLength = 4096;
     end
     if (nargin < 4 || isempty(afWindow))
-        afWindow        = hann(iBlockLength,'periodic');
+        afWindow = hann(iBlockLength,'periodic');
     end
     if (nargin < 3)
-        bLogarithmic    = true;
+        bLogarithmic = true;
     end
     if (nargin < 1)
         load handel;
-        x     = y;
-        f_s             = Fs;
-        clear y,Fs;
+        x = y;
+        f_s = Fs;
+        clear y, Fs;
     end
     
     if (length(afWindow) ~= iBlockLength)
@@ -52,18 +52,14 @@ function [M, f_c, t] = ComputeMelSpectrogram (x, f_s, bLogarithmic, afWindow, iB
     % pre-processing: normalization 
     x = ToolNormalizeAudio(x);
  
-    x = [x; zeros(iBlockLength,1)];
+    x = [x; zeros(iBlockLength, 1)];
     
     % in the real world, we would do this block by block...
-    [X,f,t]     = spectrogram(  x,...
-                                afWindow,...
-                                iBlockLength-iHopLength,...
-                                iBlockLength,...
-                                f_s);
-
-    % magnitude spectrum
-    X           = abs(X)*2/iBlockLength;
-    X([1 end],:)= X([1 end],:)/sqrt(2); %normalization
+    [X, f, t] = ComputeSpectrogram(x, ...
+                                f_s, ...
+                                afWindow, ...
+                                iBlockLength, ...
+                                iHopLength);
 
     % compute mel filters
     [H,f_c] = MelFb_I(iBlockLength, f_s, iNumMelBands, fMax);

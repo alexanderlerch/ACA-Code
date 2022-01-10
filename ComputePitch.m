@@ -10,7 +10,7 @@
 %>  'TimeZeroCrossings',
 %>
 %> @param cPitchTrackName: feature to compute, e.g. 'SpectralHps'
-%> @param afAudioData: time domain sample data, dimension channels X samples
+%> @param x: time domain sample data, dimension channels X samples
 %> @param f_s: sample rate of audio data
 %> @param afWindow: FFT window of length iBlockLength (default: hann), can be [] empty
 %> @param iBlockLength: internal block length (default: 4096 samples)
@@ -19,32 +19,32 @@
 %> @retval f frequency
 %> @retval t time stamp for the frequency value
 % ======================================================================
-function [f, t] = ComputePitch (cPitchTrackName, afAudioData, f_s, afWindow, iBlockLength, iHopLength)
+function [f, t] = ComputePitch (cPitchTrackName, x, f_s, afWindow, iBlockLength, iHopLength)
 
     % set function handle
-    hPitchFunc    = str2func (['Pitch' cPitchTrackName]);
+    hPitchFunc = str2func (['Pitch' cPitchTrackName]);
 
     % set default parameters if necessary
     if (nargin < 6)
-        iHopLength      = 2048;
+        iHopLength = 2048;
     end
     if (nargin < 5)
-        iBlockLength    = 4096;
+        iBlockLength = 4096;
     end
   
     % pre-processing: down-mixing
-    afAudioData = ToolDownmix(afAudioData);
+    x = ToolDownmix(x);
 
     % pre-processing: normalization (not necessary for many features)
-    if (length(afAudioData)> 1)
-        afAudioData = afAudioData/max(abs(afAudioData));
+    if (length(x)> 1)
+        x = x/max(abs(x));
     end
  
-    afAudioData = [afAudioData; zeros(iBlockLength,1)];
+    x = [x; zeros(iBlockLength, 1)];
     
     if (IsSpectral_I(cPitchTrackName))
         if (nargin < 4 || isempty(afWindow))
-            afWindow = hann(iBlockLength,'periodic');
+            afWindow = hann(iBlockLength, 'periodic');
         end
         
         % check FFT window function
@@ -53,26 +53,22 @@ function [f, t] = ComputePitch (cPitchTrackName, afAudioData, f_s, afWindow, iBl
         end        
 
         % in the real world, we would do this block by block...
-        [X,f,t]     = spectrogram(  afAudioData,...
-                                    afWindow,...
-                                    iBlockLength-iHopLength,...
-                                    iBlockLength,...
-                                    f_s);
-        
-        % magnitude spectrum
-        X           = abs(X)*2/iBlockLength;
-        X([1 end],:)= X([1 end],:)/sqrt(2); % normalization
+        [X, f, t] = ComputeSpectrogram(x, ...
+                                    f_s, ...
+                                    afWindow, ...
+                                    iBlockLength, ...
+                                    iHopLength);
         
         % compute frequency
-        f           = hPitchFunc(X, f_s);
+        f = hPitchFunc(X, f_s);
     end %if (IsSpectral_I(cPitchTrackName))
     
     if (IsTemporal_I(cPitchTrackName))
         % compute frequency
-        [f,t]       = hPitchFunc(   afAudioData, ...
-                                    iBlockLength, ...
-                                    iHopLength, ...
-                                    f_s);
+        [f,t] = hPitchFunc( x, ...
+                            iBlockLength, ...
+                            iHopLength, ...
+                            f_s);
     end %if (IsTemporal_I(cPitchTrackName))
 end
 

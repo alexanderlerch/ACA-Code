@@ -1,7 +1,7 @@
 % ======================================================================
 %> @brief computes the key of the input audio (super simple variant)
 %>
-%> @param afAudioData: time domain sample data, dimension samples X channels
+%> @param x: time domain sample data, dimension samples X channels
 %> @param f_s: sample rate of audio data
 %> @param iBlockLength: internal block length (default: 4096 samples)
 %> @param iHopLength: internal hop length (default: 2048 samples)
@@ -11,14 +11,14 @@
 %> @retval t timestamps for each result (length blocks)
 %> @retval afChordProbs raw chord probability matrix (dimension 24 X blocks)
 % ======================================================================
-function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (afAudioData, f_s, iBlockLength, iHopLength)
+function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (x, f_s, iBlockLength, iHopLength)
 
     % set default parameters if necessary
     if (nargin < 5)
-        iHopLength      = 2048;
+        iHopLength = 2048;
     end
     if (nargin < 4)
-        iBlockLength    = 8192;
+        iBlockLength = 8192;
     end
 
     % chord names
@@ -34,11 +34,11 @@ function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (afAudioData, f_s, iB
     [P_T] = getChordTransProb_I ();
     
     % pre-processing: normalization 
-    afAudioData = ToolNormalizeAudio(afAudioData);
+    x = ToolNormalizeAudio(x);
 
     % extract pitch chroma
     [v_pc, t] = ComputeFeature ('SpectralPitchChroma',...
-                                afAudioData,...
+                                x,...
                                 f_s,...
                                 [],...
                                 iBlockLength,...
@@ -46,11 +46,11 @@ function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (afAudioData, f_s, iB
 
     % estimate chord probabilities
     P_E = T * v_pc;
-    P_E = P_E ./ sum(P_E,1);
+    P_E = P_E ./ sum(P_E, 1);
     
     % assign series of labels/indices starting with 0
-    aiChordIdx = zeros(2,length(t));
-    [~, aiChordIdx(1,:)] = max(P_E,[],1);
+    aiChordIdx = zeros(2, length(t));
+    [~, aiChordIdx(1,:)] = max(P_E, [], 1);
 
     % compute path with Viterbi algorithm
     [aiChordIdx(2,:), ~] = ToolViterbi(P_E,...
@@ -62,7 +62,6 @@ function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (afAudioData, f_s, iB
     cChordLabel = deblank(cChords(aiChordIdx,:));
     % we want to start with 0!
     aiChordIdx = aiChordIdx - 1; 
-
 end
 
 function [T] = generateTemplateMatrix_I ()
@@ -71,13 +70,13 @@ function [T] = generateTemplateMatrix_I ()
     T = zeros(24,12);
     
     % all chord pitches are weighted equally
-    T(1,[1 5 8]) = 1/3;
-    T(13,[1 4 8]) = 1/3;
+    T(1, [1 5 8]) = 1/3;
+    T(13, [1 4 8]) = 1/3;
     
     % generate templates for all root notes
     for i = 1:11
-        T(i+1,:) = circshift(T(i,:),1,2);
-        T(i+13,:) = circshift(T(i+12,:),1,2);
+        T(i+1, :) = circshift(T(i, :), 1, 2);
+        T(i+13, :) = circshift(T(i+12, :), 1, 2);
     end
 end
 
@@ -92,20 +91,20 @@ function [P_T] = getChordTransProb_I()
     d = .5;
 
     % generate key coordinates (mode in z)
-    x = R*cos(2*pi*circ/12);
-    y = R*sin(2*pi*circ/12);
-    z = [d*ones(1,12),...
+    x = R * cos(2 * pi * circ / 12);
+    y = R * sin(2 * pi * circ / 12);
+    z = [d * ones(1,12),...
         zeros(1,12)];
  
     % compute key distances
-    for (m = 1:size(x,2))
-        for (n = 1:size(x,2))
-            P_T(m,n) = sqrt((x(m)-x(n))^2 + (y(m)-y(n))^2 + (z(m)-z(n))^2);
+    for (m = 1:size(x, 2))
+        for (n = 1:size(x, 2))
+            P_T(m, n) = sqrt((x(m)-x(n))^2 + (y(m)-y(n))^2 + (z(m)-z(n))^2);
         end
     end
 
     % convert distances into 'probabilities'
-    P_T = .1+P_T;
-    P_T = 1 - P_T/(.1+max(max(P_T)));
-    P_T = P_T ./ sum(P_T,1);
+    P_T = .1 + P_T;
+    P_T = 1 - P_T / (.1 + max(max(P_T)));
+    P_T = P_T ./ sum(P_T, 1);
 end
