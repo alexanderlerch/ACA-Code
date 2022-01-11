@@ -7,15 +7,15 @@ Matlab scripts accompanying the book "An Introduction to Audio Content Analysis"
 
 ## functionality
 The top-level functions are (alphabetical):
-> - [`computeBeatHisto`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeBeatHisto.m): calculates a simple beat histogram
-> - [`computeChords`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeChords.m): simple chord recognition
-> - [`computeFeature`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeFeature.m): calculates instantaneous features 
-> - [`computeFingerprint`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeFingerprint.m): audio fingerprint extraction 
-> - [`computeKey`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeKey.m): calculates a simple key estimate
-> - [`computeMelSpectrogram`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeMelSpectrogram.m): computes a mel spectrogram
-> - [`computeNoveltyFunction`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeNoveltyFunction.m): simple onset detection
-> - [`computePitch`](https://github.com/alexanderlerch/ACA-Code/blob/master/computePitch.m): calculates a fundamental frequency estimate
-> - [`computeSpectrogram`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeSpectrogram.m): computes a magnitude spectrogram
+> - [`ComputeBeatHisto`](https://github.com/alexanderlerch/ACA-Code/blob/master/ComputeBeatHisto.m): calculates a simple beat histogram
+> - [`ComputeChords`](https://github.com/alexanderlerch/ACA-Code/blob/master/ComputeChords.m): simple chord recognition
+> - [`ComputeFeature`](https://github.com/alexanderlerch/ACA-Code/blob/master/ComputeFeature.m): calculates instantaneous features 
+> - [`ComputeFingerprint`](https://github.com/alexanderlerch/ACA-Code/blob/master/ComputeFingerprint.m): audio fingerprint extraction 
+> - [`ComputeKey`](https://github.com/alexanderlerch/ACA-Code/blob/master/ComputeKey.m): calculates a simple key estimate
+> - [`ComputeMelSpectrogram`](https://github.com/alexanderlerch/ACA-Code/blob/master/ComputeMelSpectrogram.m): computes a mel spectrogram
+> - [`ComputeNoveltyFunction`](https://github.com/alexanderlerch/ACA-Code/blob/master/ComputeNoveltyFunction.m): simple onset detection
+> - [`ComputePitch`](https://github.com/alexanderlerch/ACA-Code/blob/master/ComputePitch.m): calculates a fundamental frequency estimate
+> - [`ComputeSpectrogram`](https://github.com/alexanderlerch/ACA-Code/blob/master/ComputeSpectrogram.m): computes a magnitude spectrogram
 
 The names of the additional functions follow the following 
 conventions:
