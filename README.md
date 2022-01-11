@@ -7,15 +7,15 @@ Matlab scripts accompanying the book "An Introduction to Audio Content Analysis"
 
 ## functionality
 The top-level functions are (alphabetical):
-> - [`computeBeatHisto`](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/computeBeatHisto.m): calculates a simple beat histogram
-> - [`computeChords`](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/computeChords.m): simple chord recognition
-> - [`computeFeature`](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/computeFeature.m): calculates instantaneous features 
-> - [`computeFingerprint`](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/computeFingerprint.m): audio fingerprint extraction 
-> - [`computeKey`](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/computeKey.m): calculates a simple key estimate
-> - [`computeMelSpectrogram`](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/computeMelSpectrogram.m): computes a mel spectrogram
-> - [`computeNoveltyFunction`](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/computeNoveltyFunction.m): simple onset detection
-> - [`computePitch`](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/computePitch.m): calculates a fundamental frequency estimate
-> - [`computeSpectrogram`](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/computeSpectrogram.m): computes a magnitude spectrogram
+> - [`computeBeatHisto`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeBeatHisto.m): calculates a simple beat histogram
+> - [`computeChords`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeChords.m): simple chord recognition
+> - [`computeFeature`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeFeature.m): calculates instantaneous features 
+> - [`computeFingerprint`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeFingerprint.m): audio fingerprint extraction 
+> - [`computeKey`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeKey.m): calculates a simple key estimate
+> - [`computeMelSpectrogram`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeMelSpectrogram.m): computes a mel spectrogram
+> - [`computeNoveltyFunction`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeNoveltyFunction.m): simple onset detection
+> - [`computePitch`](https://github.com/alexanderlerch/ACA-Code/blob/master/computePitch.m): calculates a fundamental frequency estimate
+> - [`computeSpectrogram`](https://github.com/alexanderlerch/ACA-Code/blob/master/computeSpectrogram.m): computes a magnitude spectrogram
 
 The names of the additional functions follow the following 
 conventions:
@@ -23,17 +23,17 @@ conventions:
 > - `Pitch`*: pitch tracking approach
 > - `Novelty`*: novelty function computation
 > - `Tool`*: additional helper functions and basic algorithms such as 
->   - [Blocking](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolBlockAudio.m) of audio into overlapping blocks
->   - Conversion ([freq2bark](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolFreq2Bark.m), [freq2mel](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolFreq2Mel.m), [freq2midi](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolFreq2Midi.m), [mel2freq](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/Mel2Freq.m), [midi2freq](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolMidi2Freq.m))
->   - Filterbank ([Gammatone](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolGammatoneFb.m))
->   - [Gaussian Mixture Model](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolGmm.m)
->   - [Principal Component Analysis](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolPca.m)
->   - [Feature Selection](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolSeqFeatureSel.m)
->   - [Dynamic Time Warping](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolSimpleDtw.m)
->   - [K-Means Clustering](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolSimpleKmeans.m)
->   - [K Nearest Neighbor classification](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolSimpleKnn.m)
->   - [Non-Negative Matrix Factorization](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolSimpleNmf.m)
->   - [Viterbi](https://github.com/alexanderlerch/ACA-Code/blob/master/ACA-Code/ToolViterbi.m) algorithm
+>   - [Blocking](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolBlockAudio.m) of audio into overlapping blocks
+>   - Conversion ([freq2bark](https://github.com/alexanderlerch/ACA-Code/blob/masterToolFreq2Bark.m), [freq2mel](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolFreq2Mel.m), [freq2midi](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolFreq2Midi.m), [mel2freq](https://github.com/alexanderlerch/ACA-Code/blob/master/Mel2Freq.m), [midi2freq](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolMidi2Freq.m))
+>   - Filterbank ([Gammatone](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolGammatoneFb.m))
+>   - [Gaussian Mixture Model](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolGmm.m)
+>   - [Principal Component Analysis](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolPca.m)
+>   - [Feature Selection](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolSeqFeatureSel.m)
+>   - [Dynamic Time Warping](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolSimpleDtw.m)
+>   - [K-Means Clustering](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolSimpleKmeans.m)
+>   - [K Nearest Neighbor classification](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolSimpleKnn.m)
+>   - [Non-Negative Matrix Factorization](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolSimpleNmf.m)
+>   - [Viterbi](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolViterbi.m) algorithm
 
 
 ## design principles
