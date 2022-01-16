@@ -15,25 +15,22 @@ function [vrms, t] = FeatureTimeRms(x, iBlockLength, iHopLength, f_s)
     T_i     = .3; 
     alpha   = 1-exp(-2.2/f_s/T_i);
 
-    % number of results
-    iNumOfBlocks = floor ((length(x)-iBlockLength)/iHopLength + 1);
-    
-    % compute time stamps
-    t       = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
+    % blocking
+    [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s);
     
     % allocate memory
-    vrms    = zeros(2,iNumOfBlocks);
+    vrms    = zeros(2, length(t));
 
     % single pole implementation
-    v_sp    = filter(alpha, [1 -(1-alpha)],x.^2);
+    v_sp    = filter(alpha, [1 -(1-alpha)], x.^2);
 
     % per block standard implementation
-    for (n = 1:iNumOfBlocks)
+    for (n = 1:size(x_b, 1))
         i_start     = (n-1)*iHopLength + 1;
         i_stop      = min(length(x),i_start + iBlockLength - 1);
         
         % calculate the rms
-        vrms(1,n)   = sqrt(mean(x(i_start:i_stop).^2));
+        vrms(1,n)   = sqrt(mean(x_b(n, :).^2));
         vrms(2,n)   = max(sqrt(v_sp(i_start:i_stop)));
     end
 

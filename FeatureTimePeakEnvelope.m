@@ -12,11 +12,9 @@
 % ======================================================================
 function [vppm, t] = FeatureTimePeakEnvelope(x, iBlockLength, iHopLength, f_s)
 
-    % number of results
-    iNumOfBlocks = floor ((length(x)-iBlockLength)/iHopLength + 1);
-    
-    % compute time stamps
-    t = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
+    % blocking
+    [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s);
+    iNumOfBlocks = size(x_b, 1);
     
     % allocate memory
     vppm    = zeros(2,iNumOfBlocks);
@@ -26,15 +24,12 @@ function [vppm, t] = FeatureTimePeakEnvelope(x, iBlockLength, iHopLength, f_s)
     alpha   = 1 - [exp(-2.2 / (f_s * 0.01)), exp(-2.2 / (f_s * 1.5))];
 
     for (n = 1:iNumOfBlocks)
-        i_start   = (n-1)*iHopLength + 1;
-        i_stop    = min(length(x),i_start + iBlockLength - 1);
-        
         % calculate the maximum
-        vppm(1,n) = max(abs(x(i_start:i_stop)));
+        vppm(1,n) = max(abs(x_b(n, :)));
         
         % calculate the PPM value - take into account block overlaps
         % and discard concerns wrt efficiency
-        v_tmp     = ppm_I(x(i_start:i_stop), v_tmp(iHopLength), alpha);
+        v_tmp     = ppm_I(x_b(n, :), v_tmp(iHopLength), alpha);
         vppm(2,n) = max(v_tmp);
     end
  

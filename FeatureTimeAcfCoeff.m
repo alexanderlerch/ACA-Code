@@ -19,24 +19,19 @@ function [vacf, t] = FeatureTimeAcfCoeff(x, iBlockLength, iHopLength, f_s, eta)
         eta = 20;
     end
 
-    % number of results
-    iNumOfBlocks = floor ((length(x)-iBlockLength)/iHopLength + 1);
-    
-    % compute time stamps
-    t = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
+    % blocking
+    [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s);
+    iNumOfBlocks = size(x_b, 1);
     
     % allocate memory
     vacf = zeros(length(eta),iNumOfBlocks);
     
     for (n = 1:iNumOfBlocks)
-        i_start   = (n-1)*iHopLength + 1;
-        i_stop    = min(length(x),i_start + iBlockLength - 1);
-        
         % calculate the acf
-        if (sum(x(i_start:i_stop)) == 0)
-            afCorr = zeros(2*(i_stop-i_start)+1,1);
+        if (sum(x_b(n, :)) == 0)
+            afCorr = zeros(2*size(x_b, 2)+1,1);
         else
-            afCorr = xcorr(x(i_start:i_stop), 'coeff');
+            afCorr = xcorr(x_b(n, :), 'coeff');
         end
         afCorr = afCorr((ceil((length(afCorr)/2))+1):end);
     
