@@ -16,7 +16,7 @@ function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)
     % time stamp vector
     t = (0:(iNumBlocks-1)) * iHopLength / f_s;
     
-    % pad with block length zeros just to make sure it runs for weird inputs, too
+    % pad with zeros just to make sure it runs for weird inputs, too
     xPadded = [x; zeros(iBlockLength+iHopLength, 1)];
  
     x_b = zeros(iNumBlocks, iBlockLength);
