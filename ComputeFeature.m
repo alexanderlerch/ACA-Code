@@ -52,8 +52,6 @@ function [v, t] = ComputeFeature (cFeatureName, x, f_s, afWindow, iBlockLength, 
     % pre-processing: normalization (not necessary for many features)
     x = ToolNormalizeAudio(x);
  
-    x = [x; zeros(iBlockLength,1)];
-    
     if (IsSpectral_I(cFeatureName))
         if (nargin < 4 || isempty(afWindow))
             afWindow = hann(iBlockLength, 'periodic');
