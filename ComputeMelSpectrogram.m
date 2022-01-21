@@ -52,8 +52,6 @@ function [M, f_c, t] = ComputeMelSpectrogram (x, f_s, bLogarithmic, afWindow, iB
     % pre-processing: normalization 
     x = ToolNormalizeAudio(x);
  
-    x = [x; zeros(iBlockLength, 1)];
-    
     % in the real world, we would do this block by block...
     [X, f, t] = ComputeSpectrogram(x, ...
                                 f_s, ...
@@ -62,7 +60,7 @@ function [M, f_c, t] = ComputeMelSpectrogram (x, f_s, bLogarithmic, afWindow, iB
                                 iHopLength);
 
     % compute mel filters
-    [H,f_c] = MelFb_I(iBlockLength, f_s, iNumMelBands, fMax);
+    [H, f_c] = MelFb_I(iBlockLength, f_s, iNumMelBands, fMax);
 
     % apply mel filters
     M = H*X;
