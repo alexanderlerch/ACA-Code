@@ -7,40 +7,37 @@
 %> @param iHopLength: hop length in samples
 %> @param f_s: sample rate of audio data 
 %>
-%> @retval f amdf_I lag (in Hz)
+%> @retval f_0 amdf lag (in Hz)
+%> @retval t time stamp of f_0 estimate (in s)
 % ======================================================================
-function [f, t] = PitchTimeAmdf(x, iBlockLength, iHopLength, f_s)
+function [f_0, t] = PitchTimeAmdf(x, iBlockLength, iHopLength, f_s)
 
-    % number of results
-    iNumOfBlocks = ceil (length(x)/iHopLength);
-    
-    % compute time stamps
-    t = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
+    % blocking
+    [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s);
+    iNumOfBlocks = size(x_b, 1);
     
     % allocate memory
-    f = zeros(1,iNumOfBlocks);
+    f_0 = zeros(1, iNumOfBlocks);
 
     % initialization
-    f_max   = 2000;
-    f_min   = 50;
+    f_max = 2000;
+    f_min = 50;
     eta_min = round(f_s/f_max);
     eta_max = round(f_s/f_min);
 
-    for (n = 1:iNumOfBlocks)
-        i_start = (n-1)*iHopLength + 1;
-        i_stop  = min(length(x),i_start + iBlockLength - 1);
+    for n = 1:iNumOfBlocks
   
-        if (sum(abs(x(i_start:i_stop))) == 0)
-            f(n) = 0;
+        if (sum(abs(x_b(n, :))) == 0)
+            f_0(n) = 0;
             continue;
         end
         
         % calculate the amdf_I minimum
-        afAMDF          = amdf_I(x(i_start:i_stop), eta_max);
-        [fDummy, f(n)]  = min(afAMDF(1+eta_min:end));
+        afAMDF = amdf_I(x_b(n, :), eta_max);
+        [fDummy, f_0(n)] = min(afAMDF(1+eta_min:end));
         
         % convert to Hz
-        f(n) = f_s ./ (f(n) + eta_min);
+        f_0(n) = f_s ./ (f_0(n) + eta_min);
     end
 end
 
@@ -49,7 +46,7 @@ function [AMDF] = amdf_I(x, eta_max)
  
     AMDF = ones(1, K);
     
-    for (eta=0:min(K-1,eta_max-1))
-        AMDF(eta+1) = sum(abs(x(1:K-1-eta)-x(eta+2:end)))/K;
+    for eta=0:min(K-1,eta_max-1)
+        AMDF(eta+1) = sum(abs(x(1:K-1-eta) - x(eta+2:end))) / K;
     end
 end

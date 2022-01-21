@@ -7,36 +7,32 @@
 %> @param iHopLength: hop length in samples
 %> @param f_s: sample rate of audio data 
 %>
-%> @retval f acf lag (in Hz)
+%> @retval f_0 acf lag (in Hz)
+%> @retval t time stamp of f_0 estimate (in s)
 % ======================================================================
-function [f, t] = PitchTimeAcf(x, iBlockLength, iHopLength, f_s)
+function [f_0, t] = PitchTimeAcf(x, iBlockLength, iHopLength, f_s)
 
-    % number of results
-    iNumOfBlocks = ceil (length(x)/iHopLength);
-    
-    % compute time stamps
-    t = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2))/f_s;
+    % blocking
+    [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s);
+    iNumOfBlocks = size(x_b, 1);
     
     % allocate memory
-    f = zeros(1,iNumOfBlocks);
+    f_0 = zeros(1, iNumOfBlocks);
 
     %initialization
-    fMaxFreq    = 2000;
-    fMinThresh  = 0.35;
+    fMaxFreq = 2000;
+    fMinThresh = 0.35;
 
-    for (n = 1:iNumOfBlocks)
-        eta_min = round(f_s/fMaxFreq);
+    for n = 1:iNumOfBlocks
+        eta_min = round(f_s / fMaxFreq);
 
-        i_start = (n-1)*iHopLength + 1;
-        i_stop  = min(length(x),i_start + iBlockLength - 1);
- 
-        if (sum(abs(x(i_start:i_stop))) == 0)
-            f(n) = 0;
+        if (sum(abs(x_b(n, :))) == 0)
+            f_0(n) = 0;
             continue;
         end
         % calculate the acf maximum
-        afCorr  = xcorr(x(i_start:i_stop),'coeff');
-        afCorr  = afCorr((ceil((length(afCorr)/2))+1):end);
+        afCorr = xcorr(x_b(n, :), 'coeff');
+        afCorr = afCorr((ceil((length(afCorr)/2))+1):end);
 
         % ignore values until threshold was crossed
         eta_tmp = find (afCorr < fMinThresh, 1);
@@ -46,15 +42,15 @@ function [f, t] = PitchTimeAcf(x, iBlockLength, iHopLength, f_s)
         
         % only take into account values after the first minimum
         afDeltaCorr = diff(afCorr);
-        eta_tmp     = find(afDeltaCorr > 0, 1);
+        eta_tmp = find(afDeltaCorr > 0, 1);
         if (~isempty(eta_tmp))
             eta_min = max(eta_min, eta_tmp);
         end
         
-        [fDummy, f(n)] = max(afCorr(1+eta_min:end));
+        [fDummy, f_0(n)] = max(afCorr(1+eta_min:end));
 
         % convert to Hz
-        f(n) = f_s ./ (f(n) + eta_min);
+        f_0(n) = f_s ./ (f_0(n) + eta_min);
     end
  
 end

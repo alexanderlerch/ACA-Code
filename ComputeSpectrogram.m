@@ -36,10 +36,10 @@ function [X, f, t] = ComputeSpectrogram (x, f_s, afWindow, iBlockLength, iHopLen
         error('window length mismatch');
     end
     
-    if (size(afWindow,1) < size(afWindow,2))
+    if (size(afWindow, 1) < size(afWindow, 2))
         afWindow = afWindow';
     end
-    if (size(x,1) < size(x,2))
+    if (size(x, 1) < size(x, 2))
         x = x';
     end
     
@@ -53,16 +53,16 @@ function [X, f, t] = ComputeSpectrogram (x, f_s, afWindow, iBlockLength, iHopLen
 
     [x_b, t] = ToolBlockAudio (x, iBlockLength, iHopLength, f_s);
 
-    X = zeros(size(x_b,2)/2+1, size(x_b,1));
-    f = linspace(0, f_s/2, (size(X,1)));
+    X = zeros(size(x_b, 2)/2+1, size(x_b, 1));
+    f = linspace(0, f_s/2, (size(X, 1)));
 
     for n=1:size(X,2)
-        tmp = fft(x_b(n,:)' .* afWindow);
+        tmp = fft(x_b(n, :)' .* afWindow);
         
         if bMagnitude
-            X(:,n) = abs(tmp(1:size(X,1))) * 2 / iBlockLength;
+            X(:, n) = abs(tmp(1:size(X, 1))) * 2 / iBlockLength;
         else
-            X(:,n) = (tmp(1:size(X,1))) * 2 / iBlockLength;
+            X(:, n) = (tmp(1:size(X, 1))) * 2 / iBlockLength;
         end            
     end
     

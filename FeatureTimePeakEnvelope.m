@@ -17,28 +17,28 @@ function [vppm, t] = FeatureTimePeakEnvelope(x, iBlockLength, iHopLength, f_s)
     iNumOfBlocks = size(x_b, 1);
     
     % allocate memory
-    vppm    = zeros(2,iNumOfBlocks);
-    v_tmp   = zeros(1,iBlockLength);
+    vppm = zeros(2, iNumOfBlocks);
+    v_tmp = zeros(1, iBlockLength);
 
     %initialization
-    alpha   = 1 - [exp(-2.2 / (f_s * 0.01)), exp(-2.2 / (f_s * 1.5))];
+    alpha = 1 - [exp(-2.2 / (f_s * 0.01)), exp(-2.2 / (f_s * 1.5))];
 
     for (n = 1:iNumOfBlocks)
         % calculate the maximum
-        vppm(1,n) = max(abs(x_b(n, :)));
+        vppm(1, n) = max(abs(x_b(n, :)));
         
         % calculate the PPM value - take into account block overlaps
         % and discard concerns wrt efficiency
-        v_tmp     = ppm_I(x_b(n, :), v_tmp(iHopLength), alpha);
-        vppm(2,n) = max(v_tmp);
+        v_tmp = ppm_I(x_b(n, :), v_tmp(iHopLength), alpha);
+        vppm(2 ,n) = max(v_tmp);
     end
  
     % convert to dB avoiding log(0)
-    epsilon         = 1e-5; %-100dB
+    epsilon = 1e-5; %-100dB
     
-    i_eps           = find(vppm < epsilon);
-    vppm(i_eps)     = epsilon;
-    vppm            = 20*log10(vppm);
+    i_eps = find(vppm < epsilon);
+    vppm(i_eps) = epsilon;
+    vppm = 20*log10(vppm);
 end
 
 function [ppmout] = ppm_I(x, filterbuf, alpha)
