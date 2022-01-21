@@ -1,4 +1,4 @@
-![GitHub](https://img.shields.io/github/license/alexanderlerch/ACA-Code)
+[![View ACA-Code on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/104420-aca-code)![GitHub](https://img.shields.io/github/license/alexanderlerch/ACA-Code)
 ![GitHub top language](https://img.shields.io/github/languages/top/alexanderlerch/ACA-Code)
 ![GitHub issues](https://img.shields.io/github/issues-raw/alexanderlerch/ACA-Code)
 
@@ -69,7 +69,7 @@ The _main entry point_ to all book-related information is [AudioContentAnalysis.
 
 ```matlab
 % read audio file from cWavePath
-[x, f_s] = wavread(cWavePath);
+[x, f_s] = audioread(cWavePath);
 
 % compute SpectralCentroid
 [v_sc, t] = ComputeFeature('SpectralCentroid', x, f_s);
