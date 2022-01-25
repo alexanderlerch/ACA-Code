@@ -11,7 +11,7 @@
 % ======================================================================
 function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)
     
-    iNumBlocks = ceil(size(x,1) / iHopLength );
+    iNumBlocks = ceil(size(x, 1)/iHopLength );
     
     % time stamp vector
     t = (0:(iNumBlocks-1)) * iHopLength / f_s + iBlockLength/(2*f_s);
@@ -21,7 +21,7 @@ function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)
  
     x_b = zeros(iNumBlocks, iBlockLength);
     
-    for n=1:iNumBlocks
-        x_b(n,:) = xPadded((n-1)*iHopLength+1:(n-1)*iHopLength+iBlockLength);
+    for n = 1:iNumBlocks
+        x_b(n, :) = xPadded((n-1)*iHopLength+1:(n-1)*iHopLength+iBlockLength);
     end
 end

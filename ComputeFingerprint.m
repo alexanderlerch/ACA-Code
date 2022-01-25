@@ -11,9 +11,9 @@
 function [SubFingerprint, tf] = ComputeFingerprint (x, f_s)
 
     % set default parameters
-    target_fs       = 5000;
-    iBlockLength    = 2048;
-    iHopLength      = 64;
+    target_fs = 5000;
+    iBlockLength = 2048;
+    iHopLength = 64;
   
     % pre-processing: down-mixing
     x = ToolDownmix(x);
@@ -30,7 +30,7 @@ function [SubFingerprint, tf] = ComputeFingerprint (x, f_s)
     H = generateBands_I(iBlockLength, target_fs);
     
     % initialization: generate FFT window
-    afWindow    = hann(iBlockLength, 'periodic');
+    afWindow = hann(iBlockLength, 'periodic');
     if (length(afWindow) ~= iBlockLength)
         error('window length mismatch');
     end                        
@@ -43,8 +43,8 @@ function [SubFingerprint, tf] = ComputeFingerprint (x, f_s)
                                 iHopLength);
 
     % power spectrum
-    X = abs(X)*2/iBlockLength;
-    X([1 end],:) = X([1 end], :) / sqrt(2); % normalization
+    X = abs(X) * 2 / iBlockLength;
+    X([1 end], :) = X([1 end], :) / sqrt(2); % normalization
     X = abs(X).^2;
     
     % group spectral bins in bands

@@ -10,14 +10,14 @@
 function [vssl] = FeatureSpectralSlope (X, f_s)
 
     % compute mean
-    mu_x    = mean(abs(X), 1);
+    mu_x = mean(abs(X), 1);
     
     % compute index vector
-    kmu     = [0:size(X,1)-1] - size(X,1)/2;
+    kmu = (0:size(X, 1)-1) - size(X, 1)/2;
     
     % compute slope
-    X       = X - repmat(mu_x, size(X,1), 1);
-    vssl    = (kmu*X)/(kmu*kmu');
+    X = X - repmat(mu_x, size(X, 1), 1);
+    vssl = (kmu*X) / (kmu*kmu');
 end
 
 

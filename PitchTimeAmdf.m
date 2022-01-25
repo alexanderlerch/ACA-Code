@@ -34,10 +34,10 @@ function [f_0, t] = PitchTimeAmdf(x, iBlockLength, iHopLength, f_s)
         
         % calculate the amdf_I minimum
         afAMDF = amdf_I(x_b(n, :), eta_max);
-        [fDummy, f_0(n)] = min(afAMDF(1+eta_min:end));
+        [fDummy, T_0(n)] = min(afAMDF(1+eta_min:end));
         
         % convert to Hz
-        f_0(n) = f_s ./ (f_0(n) + eta_min);
+        f_0(n) = f_s ./ (T_0(n) + eta_min);
     end
 end
 

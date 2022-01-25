@@ -10,10 +10,10 @@
 function [vtsc] = FeatureSpectralCrestFactor (X, f_s)
 
     % get maximum
-    vtsc = max(X,[],1) ./ sum(X,1);
+    vtsc = max(X, [], 1) ./ sum(X, 1);
    
     % avoid NaN for silence frames
-    vtsc (sum(X,1) == 0) = 0;
+    vtsc (sum(X, 1) == 0) = 0;
 end
 
 

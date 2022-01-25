@@ -15,10 +15,10 @@ function [vta, t] = FeatureTimeMaxAcf(x, iBlockLength, iHopLength, f_s, f_max, f
     % initialization
     % these values are arbitrary - adapt to your use case
     if (nargin < 6)
-        f_max       = 2000;
+        f_max = 2000;
     end
     if (nargin < 5)
-        fMinThresh  = 0.35;
+        fMinThresh = 0.35;
     end
     
     % blocking
@@ -26,14 +26,14 @@ function [vta, t] = FeatureTimeMaxAcf(x, iBlockLength, iHopLength, f_s, f_max, f
     iNumOfBlocks = size(x_b, 1);
     
     % allocate memory
-    vta = zeros(1,iNumOfBlocks);
+    vta = zeros(1, iNumOfBlocks);
     
-    for (n = 1:iNumOfBlocks)
-        eta_min = ceil(f_s/f_max);
+    for n = 1:iNumOfBlocks
+        eta_min = ceil(f_s / f_max);
         
         % calculate the acf
-        afCorr  = xcorr(x_b(n, :), 'coeff');
-        afCorr  = afCorr((ceil((length(afCorr)/2))+1):end);
+        afCorr = xcorr(x_b(n, :), 'coeff');
+        afCorr = afCorr((ceil((length(afCorr)/2))+1):end);
         
         % ignore values until threshold was crossed
         eta_tmp = find (afCorr < fMinThresh, 1);
@@ -43,7 +43,7 @@ function [vta, t] = FeatureTimeMaxAcf(x, iBlockLength, iHopLength, f_s, f_max, f
         
         % only take into account values after the first minimum
         afDeltaCorr = diff(afCorr);
-        eta_tmp     = find(afDeltaCorr > 0, 1);
+        eta_tmp = find(afDeltaCorr > 0, 1);
         if (~isempty(eta_tmp))
             eta_min = max(eta_min, eta_tmp);
         end

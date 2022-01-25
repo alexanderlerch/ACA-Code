@@ -10,11 +10,11 @@
 function [d_flux] = NoveltyFlux(X, f_s)
 
     % difference spectrum (set first diff to zero)
-    afDeltaX    = diff([X(:,1), X],1,2);
+    afDeltaX = diff([X(:, 1), X], 1, 2);
     
     % half-wave rectification
     afDeltaX(afDeltaX<0) = 0;
     
     % flux
-    d_flux = sqrt(sum(afDeltaX.^2))/size(X,1);
+    d_flux = sqrt(sum(afDeltaX.^2)) / size(X, 1);
 end

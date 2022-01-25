@@ -16,24 +16,24 @@ function [vtpr] = FeatureSpectralTonalPowerRatio(X, f_s, G_T)
     end
 
     % allocate memory
-    vtpr    = zeros(1,size(X,2));
+    vtpr = zeros(1, size(X, 2));
 
     % convert to power spectrum
-    X       = X.^2;
-    fSum    = sum(X,1);
+    X = X.^2;
+    fSum = sum(X, 1);
  
-    for (n = 1:size(X,2))
+    for n = 1:size(X, 2)
         if (fSum(n) == 0)
             % do nothing for 0-blocks
             continue;
         end
         % find local maxima
-        [afPeaks]   = findpeaks(X(:,n));
+        [afPeaks] = findpeaks(X(:, n));
         
         % find peaks above the threshold
-        k_peak      = find(afPeaks > G_T);
+        k_peak = find(afPeaks > G_T);
         
         % calculate the ratio
-        vtpr(n)     = sum(afPeaks(k_peak))/fSum(n);
+        vtpr(n) = sum(afPeaks(k_peak)) / fSum(n);
     end
 end

@@ -47,10 +47,9 @@ function [f_0, t] = PitchTimeAcf(x, iBlockLength, iHopLength, f_s)
             eta_min = max(eta_min, eta_tmp);
         end
         
-        [fDummy, f_0(n)] = max(afCorr(1+eta_min:end));
+        [fDummy, T_0(n)] = max(afCorr(1+eta_min:end));
 
         % convert to Hz
-        f_0(n) = f_s ./ (f_0(n) + eta_min);
+        f_0(n) = f_s ./ (T_0(n) + eta_min);
     end
- 
 end

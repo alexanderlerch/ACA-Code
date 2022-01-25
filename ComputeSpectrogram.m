@@ -56,7 +56,7 @@ function [X, f, t] = ComputeSpectrogram (x, f_s, afWindow, iBlockLength, iHopLen
     X = zeros(size(x_b, 2)/2+1, size(x_b, 1));
     f = linspace(0, f_s/2, (size(X, 1)));
 
-    for n=1:size(X,2)
+    for n = 1:size(X,2)
         tmp = fft(x_b(n, :)' .* afWindow);
         
         if bMagnitude

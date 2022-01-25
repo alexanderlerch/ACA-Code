@@ -60,7 +60,7 @@ function [M, f_c, t] = ComputeMelSpectrogram (x, f_s, bLogarithmic, afWindow, iB
                                 iHopLength);
 
     % compute mel filters
-    [H, f_c] = MelFb_I(iBlockLength, f_s, iNumMelBands, fMax);
+    [H, f_c] = getMelFb_I(iBlockLength, f_s, iNumMelBands, fMax);
 
     % apply mel filters
     M = H*X;
@@ -71,7 +71,7 @@ function [M, f_c, t] = ComputeMelSpectrogram (x, f_s, bLogarithmic, afWindow, iB
     end
 end
 
-function [H,f_c] = MelFb_I (iFftLength, f_s, iNumFilters, f_max)
+function [H,f_c] = getMelFb_I (iFftLength, f_s, iNumFilters, f_max)
 
     % initialization
     f_min   = 0;

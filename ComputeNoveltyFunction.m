@@ -68,10 +68,9 @@ function [d, t, G_T, iPeaks] = ComputeNoveltyFunction (cNoveltyName, x, f_s, afW
     
     % compute threshold
     iLen = min(iThreshLpLen, floor(length(d) / 3));
-    b   = ones(iLen, 1) / iLen;
+    b = ones(iLen, 1) / iLen;
     G_T = .4*mean(d(2:end)) + filtfilt (b, 1, d);
     
-    [fPeaks,iPeaks] = findpeaks(max(0, d - G_T)); 
-    
+    [fPeaks, iPeaks] = findpeaks(max(0, d - G_T)); 
 end
 

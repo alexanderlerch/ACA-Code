@@ -7,8 +7,8 @@
 % ======================================================================
 function [x_downmix] = ToolDownmix(x)
     
-    if (size(x,2)> 1)
-        x_downmix = mean(x,2);
+    if (size(x, 2) > 1)
+        x_downmix = mean(x, 2);
     else
         x_downmix = x;
     end

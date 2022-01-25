@@ -17,10 +17,10 @@ function [vzc, t] = FeatureTimeZeroCrossingRate(x, iBlockLength, iHopLength, f_s
     iNumOfBlocks = size(x_b, 1);
     
     % allocate memory
-    vzc = zeros(1,iNumOfBlocks);
+    vzc = zeros(1, iNumOfBlocks);
     
-    for (n = 1:iNumOfBlocks)
+    for n = 1:iNumOfBlocks
         % compute the zero crossing rate
-        vzc(n)  = 0.5*mean(abs(diff(sign(x_b(n, :)))));
+        vzc(n)  = 0.5 * mean(abs(diff(sign(x_b(n, :)))));
     end
 end
