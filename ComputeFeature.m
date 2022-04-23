@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes a feature from the audio data
+%computes a feature from the audio data
 %>
 %> supported features are:
 %>  'SpectralCentroid',

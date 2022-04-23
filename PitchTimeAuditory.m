@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the f_0 via a simple "auditory" approach
+%computes the f_0 via a simple "auditory" approach
 %> called by ::ComputePitch
 %>
 %> @param x: audio signal

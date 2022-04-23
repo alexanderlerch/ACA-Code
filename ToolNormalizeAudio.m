@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief normalizes audio signal
+%normalizes audio signal
 %>
 %> @param x: audio signal (dimension length x channels)
 %>

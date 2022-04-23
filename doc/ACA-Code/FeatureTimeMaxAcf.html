@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FeatureTimeMaxAcf</title>
+  <meta name="keywords" content="FeatureTimeMaxAcf">
+  <meta name="description" content="computes the ACF maxima of a time domain signal">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; FeatureTimeMaxAcf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>FeatureTimeMaxAcf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes the ACF maxima of a time domain signal</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [vta, t] = FeatureTimeMaxAcf(x, iBlockLength, iHopLength, f_s, f_max, fMinThresh) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes the ACF maxima of a time domain signal
+&gt; called by ::ComputeFeature
+&gt;
+&gt; @param x: audio signal
+&gt; @param iBlockLength: block length in samples
+&gt; @param iHopLength: hop length in samples
+&gt; @param f_s: sample rate of audio data (unused)
+&gt;
+&gt; @retval vta autocorrelation maximum
+&gt; @retval t time stamp
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ToolBlockAudio.html" class="code" title="function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)">ToolBlockAudio</a>	blocks audio signal into overlapping blocks</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes the ACF maxima of a time domain signal</span>
+0002 <span class="comment">%&gt; called by ::ComputeFeature</span>
+0003 <span class="comment">%&gt;</span>
+0004 <span class="comment">%&gt; @param x: audio signal</span>
+0005 <span class="comment">%&gt; @param iBlockLength: block length in samples</span>
+0006 <span class="comment">%&gt; @param iHopLength: hop length in samples</span>
+0007 <span class="comment">%&gt; @param f_s: sample rate of audio data (unused)</span>
+0008 <span class="comment">%&gt;</span>
+0009 <span class="comment">%&gt; @retval vta autocorrelation maximum</span>
+0010 <span class="comment">%&gt; @retval t time stamp</span>
+0011 <span class="comment">% ======================================================================</span>
+0012 <a name="_sub0" href="#_subfunctions" class="code">function [vta, t] = FeatureTimeMaxAcf(x, iBlockLength, iHopLength, f_s, f_max, fMinThresh)</a>
+0013  
+0014     <span class="comment">% initialization</span>
+0015     <span class="comment">% these values are arbitrary - adapt to your use case</span>
+0016     <span class="keyword">if</span> (nargin &lt; 6)
+0017         f_max = 2000;
+0018     <span class="keyword">end</span>
+0019     <span class="keyword">if</span> (nargin &lt; 5)
+0020         fMinThresh = 0.35;
+0021     <span class="keyword">end</span>
+0022     
+0023     <span class="comment">% blocking</span>
+0024     [x_b, t] = <a href="ToolBlockAudio.html" class="code" title="function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)">ToolBlockAudio</a>(x, iBlockLength, iHopLength, f_s);
+0025     iNumOfBlocks = size(x_b, 1);
+0026     
+0027     <span class="comment">% allocate memory</span>
+0028     vta = zeros(1, iNumOfBlocks);
+0029     
+0030     <span class="keyword">for</span> n = 1:iNumOfBlocks
+0031         eta_min = ceil(f_s / f_max);
+0032         
+0033         <span class="comment">% calculate the acf</span>
+0034         afCorr = xcorr(x_b(n, :), <span class="string">'coeff'</span>);
+0035         afCorr = afCorr((ceil((length(afCorr)/2))+1):end);
+0036         
+0037         <span class="comment">% ignore values until threshold was crossed</span>
+0038         eta_tmp = find (afCorr &lt; fMinThresh, 1);
+0039         <span class="keyword">if</span> (~isempty(eta_tmp))
+0040             eta_min = max(eta_min, eta_tmp);
+0041         <span class="keyword">end</span>
+0042         
+0043         <span class="comment">% only take into account values after the first minimum</span>
+0044         afDeltaCorr = diff(afCorr);
+0045         eta_tmp = find(afDeltaCorr &gt; 0, 1);
+0046         <span class="keyword">if</span> (~isempty(eta_tmp))
+0047             eta_min = max(eta_min, eta_tmp);
+0048         <span class="keyword">end</span>
+0049         
+0050         <span class="comment">% find the maximum in the computed range</span>
+0051         vta(n) = max(afCorr(1+eta_min:end));
+0052     <span class="keyword">end</span>
+0053 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

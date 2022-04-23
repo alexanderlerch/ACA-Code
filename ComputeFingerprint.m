@@ -1,6 +1,5 @@
-% ======================================================================
-%> @brief computes a fingerprint audio data (only the subfingerprint, one
-%fingerprint is comprised of 256 consecutive subfingerprint.
+%computes a fingerprint of the audio data (only the subfingerprint, one
+%fingerprint is comprised of 256 consecutive subfingerprints.
 %>
 %> @param x: time domain sample data, 
 %> @param f_s: sample rate of audio data

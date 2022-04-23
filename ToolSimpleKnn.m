@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief knn classifier
+%performs knn classification
 %>
 %> @param TestFeatureVector: features for test observation (length iNumFeatures)
 %> @param TrainFeatureMatrix: features for all train observations (dimension iNumFeatures x iNumObservations)

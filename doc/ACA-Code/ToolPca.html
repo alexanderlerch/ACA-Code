@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ToolPca</title>
+  <meta name="keywords" content="ToolPca">
+  <meta name="description" content="principal component analysis">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ToolPca.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ToolPca
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>principal component analysis</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [U_pc,T,eigenvalues] = ToolPca(V) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">principal component analysis
+&gt;
+&gt; @param V: input matrix (features X observations)
+&gt;
+&gt; @retval U_pc transformed features (score)
+&gt; @retval T transformation matrix (loading)
+&gt; @retval eigenvalues (latent)
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%principal component analysis</span>
+0002 <span class="comment">%&gt;</span>
+0003 <span class="comment">%&gt; @param V: input matrix (features X observations)</span>
+0004 <span class="comment">%&gt;</span>
+0005 <span class="comment">%&gt; @retval U_pc transformed features (score)</span>
+0006 <span class="comment">%&gt; @retval T transformation matrix (loading)</span>
+0007 <span class="comment">%&gt; @retval eigenvalues (latent)</span>
+0008 <span class="comment">% ======================================================================</span>
+0009 <a name="_sub0" href="#_subfunctions" class="code">function [U_pc,T,eigenvalues] = ToolPca(V)</a>
+0010 
+0011     <span class="comment">% covariance</span>
+0012     cov_VV = cov(V');
+0013     
+0014     <span class="comment">% svd</span>
+0015     [~,D,T] = svd(cov_VV);
+0016     
+0017     <span class="comment">% features to components</span>
+0018     U_pc    = T'*V; 
+0019     
+0020     eigenvalues = diag(D); 
+0021 <span class="keyword">end</span>
+0022</pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

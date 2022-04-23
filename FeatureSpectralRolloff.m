@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the spectral rolloff from the magnitude spectrum
+%computes the spectral rolloff from the magnitude spectrum
 %> called by ::ComputeFeature
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)

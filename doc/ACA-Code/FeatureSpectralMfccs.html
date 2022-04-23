@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FeatureSpectralMfccs</title>
+  <meta name="keywords" content="FeatureSpectralMfccs">
+  <meta name="description" content="computes the MFCCs from the magnitude spectrum (see Slaney)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; FeatureSpectralMfccs.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>FeatureSpectralMfccs
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes the MFCCs from the magnitude spectrum (see Slaney)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [vmfcc] = FeatureSpectralMfccs(X, f_s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes the MFCCs from the magnitude spectrum (see Slaney)
+&gt; called by ::ComputeFeature
+&gt;
+&gt; @param X: spectrogram (dimension FFTLength X Observations)
+&gt; @param f_s: sample rate of audio data (unused)
+&gt;
+&gt; @retval vmfcc mel frequency cepstral coefficients
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ToolMfccFb.html" class="code" title="function [H] = ToolMfccFb (iFftLength, f_s)">ToolMfccFb</a>	> see function mfcc.m from Slaneys Auditory Toolbox</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [T] = GenerateDctMatrix_I (iNumBands, iNumCepstralCoeffs)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes the MFCCs from the magnitude spectrum (see Slaney)</span>
+0002 <span class="comment">%&gt; called by ::ComputeFeature</span>
+0003 <span class="comment">%&gt;</span>
+0004 <span class="comment">%&gt; @param X: spectrogram (dimension FFTLength X Observations)</span>
+0005 <span class="comment">%&gt; @param f_s: sample rate of audio data (unused)</span>
+0006 <span class="comment">%&gt;</span>
+0007 <span class="comment">%&gt; @retval vmfcc mel frequency cepstral coefficients</span>
+0008 <span class="comment">% ======================================================================</span>
+0009 <a name="_sub0" href="#_subfunctions" class="code">function [vmfcc] = FeatureSpectralMfccs(X, f_s)</a>
+0010 
+0011     iNumCoeffs = 13;
+0012     
+0013     <span class="comment">% allocate memory</span>
+0014     vmfcc = zeros(iNumCoeffs, size(X, 2));
+0015 
+0016     <span class="comment">% create filters</span>
+0017     H = <a href="ToolMfccFb.html" class="code" title="function [H] = ToolMfccFb (iFftLength, f_s)">ToolMfccFb</a>(size(X, 1), f_s);
+0018     
+0019     <span class="comment">% create transformation matrix</span>
+0020     T = <a href="#_sub1" class="code" title="subfunction [T] = GenerateDctMatrix_I (iNumBands, iNumCepstralCoeffs)">GenerateDctMatrix_I</a> (size(H, 1), iNumCoeffs);
+0021  
+0022     <span class="keyword">for</span> n = 1:size(X,2)
+0023         <span class="comment">% compute the mel spectrum</span>
+0024         X_Mel = log10(H * X(:, n) + 1e-20);
+0025 
+0026         <span class="comment">% calculate the mfccs</span>
+0027         vmfcc(:, n) = T * X_Mel;
+0028     <span class="keyword">end</span>
+0029 <span class="keyword">end</span>
+0030 
+0031 
+0032 <span class="comment">%&gt; see function mfcc.m from Slaneys Auditory Toolbox</span>
+0033 <a name="_sub1" href="#_subfunctions" class="code">function [T] = GenerateDctMatrix_I (iNumBands, iNumCepstralCoeffs)</a>
+0034     T = cos((0:(iNumCepstralCoeffs-1))' * <span class="keyword">...</span>
+0035             (2*(0:(iNumBands-1))+1) * pi/2/iNumBands);
+0036             
+0037     T  = T/sqrt(iNumBands/2);
+0038     T(1, :)  = T(1, :) * sqrt(2)/2;
+0039 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

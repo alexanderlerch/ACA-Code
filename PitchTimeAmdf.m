@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the lag of the average magnitude difference function
+%computes the lag of the average magnitude difference function
 %> called by ::ComputePitch
 %>
 %> @param x: audio signal

@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FeatureTimePeakEnvelope</title>
+  <meta name="keywords" content="FeatureTimePeakEnvelope">
+  <meta name="description" content="computes two peak envelope measures for a time domain signal">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; FeatureTimePeakEnvelope.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>FeatureTimePeakEnvelope
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes two peak envelope measures for a time domain signal</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [vppm, t] = FeatureTimePeakEnvelope(x, iBlockLength, iHopLength, f_s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes two peak envelope measures for a time domain signal
+&gt; called by ::ComputeFeature
+&gt;
+&gt; @param x: audio signal
+&gt; @param iBlockLength: block length in samples
+&gt; @param iHopLength: hop length in samples
+&gt; @param f_s: sample rate of audio data (unused)
+&gt;
+&gt; @retval vppm peak envelope (1,:: max, 2,:: PPM)
+&gt; @retval t time stamp
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ToolBlockAudio.html" class="code" title="function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)">ToolBlockAudio</a>	blocks audio signal into overlapping blocks</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [ppmout] = ppm_I(x, filterbuf, alpha)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes two peak envelope measures for a time domain signal</span>
+0002 <span class="comment">%&gt; called by ::ComputeFeature</span>
+0003 <span class="comment">%&gt;</span>
+0004 <span class="comment">%&gt; @param x: audio signal</span>
+0005 <span class="comment">%&gt; @param iBlockLength: block length in samples</span>
+0006 <span class="comment">%&gt; @param iHopLength: hop length in samples</span>
+0007 <span class="comment">%&gt; @param f_s: sample rate of audio data (unused)</span>
+0008 <span class="comment">%&gt;</span>
+0009 <span class="comment">%&gt; @retval vppm peak envelope (1,:: max, 2,:: PPM)</span>
+0010 <span class="comment">%&gt; @retval t time stamp</span>
+0011 <span class="comment">% ======================================================================</span>
+0012 <a name="_sub0" href="#_subfunctions" class="code">function [vppm, t] = FeatureTimePeakEnvelope(x, iBlockLength, iHopLength, f_s)</a>
+0013 
+0014     <span class="comment">% blocking</span>
+0015     [x_b, t] = <a href="ToolBlockAudio.html" class="code" title="function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)">ToolBlockAudio</a>(x, iBlockLength, iHopLength, f_s);
+0016     iNumOfBlocks = size(x_b, 1);
+0017     
+0018     <span class="comment">% allocate memory</span>
+0019     vppm = zeros(2, iNumOfBlocks);
+0020     v_tmp = zeros(1, iBlockLength);
+0021 
+0022     <span class="comment">%initialization</span>
+0023     alpha = 1 - [exp(-2.2 / (f_s * 0.01)), exp(-2.2 / (f_s * 1.5))];
+0024 
+0025     <span class="keyword">for</span> n = 1:iNumOfBlocks
+0026         <span class="comment">% calculate the maximum</span>
+0027         vppm(1, n) = max(abs(x_b(n, :)));
+0028         
+0029         <span class="comment">% calculate the PPM value</span>
+0030         v_tmp = <a href="#_sub1" class="code" title="subfunction [ppmout] = ppm_I(x, filterbuf, alpha)">ppm_I</a>(x_b(n, :), v_tmp(iHopLength), alpha);
+0031         vppm(2, n) = max(v_tmp);
+0032     <span class="keyword">end</span>
+0033  
+0034     <span class="comment">% convert to dB avoiding log(0)</span>
+0035     epsilon = 1e-5; <span class="comment">%-100dB</span>
+0036     vppm(vppm &lt; epsilon) = epsilon;
+0037     vppm = 20*log10(vppm);
+0038 <span class="keyword">end</span>
+0039 
+0040 <a name="_sub1" href="#_subfunctions" class="code">function [ppmout] = ppm_I(x, filterbuf, alpha)</a>
+0041 
+0042     <span class="comment">%initialization</span>
+0043     ppmout = zeros(size(x));
+0044     alpha_AT = alpha(1);
+0045     alpha_RT = alpha(2);
+0046  
+0047     x = abs(x);
+0048     <span class="keyword">for</span> i = 1: length(x)
+0049         <span class="keyword">if</span> (filterbuf &gt; x(i))
+0050             <span class="comment">% release state</span>
+0051             ppmout(i) = (1-alpha_RT) * filterbuf;
+0052         <span class="keyword">else</span>
+0053             <span class="comment">% attack state</span>
+0054             ppmout(i) = alpha_AT * x(i) + (1-alpha_AT) * filterbuf;
+0055         <span class="keyword">end</span>
+0056         filterbuf = ppmout(i);
+0057     <span class="keyword">end</span>
+0058 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

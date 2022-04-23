@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes path through a probability matrix with Viterbi
+%computes path through a probability matrix with Viterbi
 %>
 %> @param P_E: emmission probability matrix (S X N)
 %> @param P_T: transition probability matrix (S X S)

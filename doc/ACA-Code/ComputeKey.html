@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ComputeKey</title>
+  <meta name="keywords" content="ComputeKey">
+  <meta name="description" content="computes the key of the input audio (super simple variant)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ComputeKey.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ComputeKey
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes the key of the input audio (super simple variant)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [cKey] = ComputeKey (x, f_s, afWindow, iBlockLength, iHopLength) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes the key of the input audio (super simple variant)
+&gt;
+&gt; @param x: time domain sample data, dimension samples X channels
+&gt; @param f_s: sample rate of audio data
+&gt; @param afWindow: FFT window of length iBlockLength (default: hann), can be [] empty
+&gt; @param iBlockLength: internal block length (default: 4096 samples)
+&gt; @param iHopLength: internal hop length (default: 2048 samples)
+&gt;
+&gt; @retval cKey key string
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes the key of the input audio (super simple variant)</span>
+0002 <span class="comment">%&gt;</span>
+0003 <span class="comment">%&gt; @param x: time domain sample data, dimension samples X channels</span>
+0004 <span class="comment">%&gt; @param f_s: sample rate of audio data</span>
+0005 <span class="comment">%&gt; @param afWindow: FFT window of length iBlockLength (default: hann), can be [] empty</span>
+0006 <span class="comment">%&gt; @param iBlockLength: internal block length (default: 4096 samples)</span>
+0007 <span class="comment">%&gt; @param iHopLength: internal hop length (default: 2048 samples)</span>
+0008 <span class="comment">%&gt;</span>
+0009 <span class="comment">%&gt; @retval cKey key string</span>
+0010 <span class="comment">% ======================================================================</span>
+0011 <a name="_sub0" href="#_subfunctions" class="code">function [cKey] = ComputeKey (x, f_s, afWindow, iBlockLength, iHopLength)</a>
+0012 
+0013     <span class="comment">% set default parameters if necessary</span>
+0014     <span class="keyword">if</span> (nargin &lt; 5)
+0015         iHopLength = 2048;
+0016     <span class="keyword">end</span>
+0017     <span class="keyword">if</span> (nargin &lt; 4)
+0018         iBlockLength = 4096;
+0019     <span class="keyword">end</span>
+0020 
+0021     <span class="keyword">if</span> (nargin &lt; 3 || isempty(afWindow))
+0022         afWindow = hann(iBlockLength, <span class="string">'periodic'</span>);
+0023     <span class="keyword">end</span>
+0024 
+0025     <span class="comment">% key names</span>
+0026     cMajor  = char (<span class="string">'C Maj'</span>,<span class="string">'C# Maj'</span>,<span class="string">'D Maj'</span>,<span class="string">'D# Maj'</span>,<span class="string">'E Maj'</span>,<span class="string">'F Maj'</span>,<span class="keyword">...</span>
+0027         <span class="string">'F# Maj'</span>,<span class="string">'G Maj'</span>,<span class="string">'G# Maj'</span>,<span class="string">'A Maj'</span>,<span class="string">'A# Maj'</span>,<span class="string">'B Maj'</span>);
+0028     cMinor  = char (<span class="string">'c min'</span>,<span class="string">'c# min'</span>,<span class="string">'d min'</span>,<span class="string">'d# min'</span>,<span class="string">'e min'</span>,<span class="string">'f min'</span>,<span class="keyword">...</span>
+0029         <span class="string">'f# min'</span>,<span class="string">'g min'</span>,<span class="string">'g# min'</span>,<span class="string">'a min'</span>,<span class="string">'a# min'</span>,<span class="string">'b min'</span>);
+0030     
+0031     <span class="comment">% template pitch chroma (Krumhansl major/minor)</span>
+0032     t_pc = [6.35 2.23 3.48 2.33 4.38 4.09 2.52 5.19 2.39 3.66 2.29 2.88
+0033             6.33 2.68 3.52 5.38 2.60 3.53 2.54 4.75 3.98 2.69 3.34 3.17];
+0034     t_pc = diag(1 ./ sum(t_pc, 2)) * t_pc;
+0035     
+0036     <span class="comment">% compute FFT window function</span>
+0037     <span class="keyword">if</span> (length(afWindow) ~= iBlockLength)
+0038         error(<span class="string">'window length mismatch'</span>);
+0039     <span class="keyword">end</span>        
+0040 
+0041     <span class="comment">% extract audio pitch chroma</span>
+0042     [v_pc, t] = computeFeature(&quot;SpectralPitchChroma&quot;, x, f_s, afWindow, iBlockLength, iHopLength);
+0043 
+0044     <span class="comment">% average pitch chroma</span>
+0045     v_pc = mean(v_pc, 2);
+0046     
+0047     <span class="comment">% compute manhattan distances for major and minor</span>
+0048     d = zeros(2,12);
+0049     <span class="keyword">for</span> (i = 0:11)
+0050         d(:,i+1)= sum(abs(repmat(v_pc', 2, 1)-circshift(t_pc, [0 i])), 2);
+0051     <span class="keyword">end</span>
+0052     [dist,iKeyIdx] = min(d,[],2);
+0053     <span class="keyword">if</span> (dist(1) &lt; dist(2))
+0054         cKey = deblank(cMajor(iKeyIdx(1), :));
+0055     <span class="keyword">else</span>
+0056         cKey = deblank(cMinor(iKeyIdx(2), :));
+0057     <span class="keyword">end</span>    
+0058 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

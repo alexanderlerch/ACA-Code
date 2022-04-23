@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief converts frequency to mel
+%converts frequency to mel
 %>
 %> @param fMel: frequency
 %> @param cModel: 'Fant','Shaughnessy', or 'Umesh'

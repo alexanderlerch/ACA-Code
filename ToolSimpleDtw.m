@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes path through a distance matrix with simple Dynamic Time
+%computes path through a distance matrix with simple Dynamic Time
 %> Warping
 %>
 %> @param D: distance matrix

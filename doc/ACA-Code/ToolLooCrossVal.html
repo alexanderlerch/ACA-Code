@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ToolLooCrossVal</title>
+  <meta name="keywords" content="ToolLooCrossVal">
+  <meta name="description" content="Leave One Out Cross Validation with Nearest Neighbor Classifier">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ToolLooCrossVal.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ToolLooCrossVal
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Leave One Out Cross Validation with Nearest Neighbor Classifier</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Acc, conf_mat] = ToolLooCrossVal(FeatureMatrix, ClassIdx) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">Leave One Out Cross Validation with Nearest Neighbor Classifier
+&gt;
+&gt; @param FeatureMatrix: features (dimension iNumFeatures x iNumObservations)
+&gt; @param ClassIdx: vector with class indices (length iNumObservations, starting from 0)
+&gt;
+&gt; @retval Acc overall accuracy after Cross-Validation
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ToolSimpleKnn.html" class="code" title="function [class] = ToolSimpleKnn(TestFeatureVector, TrainFeatureMatrix, TrainClassIndices, k)">ToolSimpleKnn</a>	performs knn classification</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ExampleMusicSpeechClassification.html" class="code" title="function ExampleMusicSpeechClassification(cDatasetPath)">ExampleMusicSpeechClassification</a>	</li><li><a href="ToolSeqFeatureSel.html" class="code" title="function [selFeatureIdx, AccPerSubset] = ToolSeqFeatureSel(V, ClassIdx, iNumFeatures2Select)">ToolSeqFeatureSel</a>	computes Sequential Forward Feature Selection wrapping a nearest neighbor</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%Leave One Out Cross Validation with Nearest Neighbor Classifier</span>
+0002 <span class="comment">%&gt;</span>
+0003 <span class="comment">%&gt; @param FeatureMatrix: features (dimension iNumFeatures x iNumObservations)</span>
+0004 <span class="comment">%&gt; @param ClassIdx: vector with class indices (length iNumObservations, starting from 0)</span>
+0005 <span class="comment">%&gt;</span>
+0006 <span class="comment">%&gt; @retval Acc overall accuracy after Cross-Validation</span>
+0007 <span class="comment">% ======================================================================</span>
+0008 <a name="_sub0" href="#_subfunctions" class="code">function [Acc, conf_mat] = ToolLooCrossVal(FeatureMatrix, ClassIdx)</a>
+0009  
+0010     <span class="comment">% initialize</span>
+0011     TP = 0;
+0012     
+0013     conf_mat = zeros(length(unique(ClassIdx)));
+0014     
+0015     <span class="comment">% loop over observations</span>
+0016     <span class="keyword">for</span> o = 1:size(FeatureMatrix, 2)
+0017         <span class="comment">% remove current observation from 'training set'</span>
+0018         v_train = [FeatureMatrix(:, 1:o-1) FeatureMatrix(:, o+1:end)]';
+0019         C_train = [ClassIdx(1:o-1) ClassIdx(:, o+1:end)]';
+0020         
+0021         <span class="comment">% compute result of Nearest Neighbor Classifier given the traindata</span>
+0022         res = <a href="ToolSimpleKnn.html" class="code" title="function [class] = ToolSimpleKnn(TestFeatureVector, TrainFeatureMatrix, TrainClassIndices, k)">ToolSimpleKnn</a>(FeatureMatrix(:, o)', v_train, C_train, 1);
+0023         
+0024         conf_mat(ClassIdx(o)+1, res+1) = conf_mat(ClassIdx(o)+1, res+1) + 1;     
+0025         
+0026         <span class="comment">% if result is correct increment number of true positives</span>
+0027         <span class="keyword">if</span> (res == ClassIdx(o))
+0028             TP = TP+1;
+0029         <span class="keyword">end</span>
+0030     <span class="keyword">end</span>
+0031  
+0032     <span class="comment">% compute overall (micro) accuracy</span>
+0033     Acc = TP / length(ClassIdx);
+0034 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

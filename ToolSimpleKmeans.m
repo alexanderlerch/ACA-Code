@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief kmeans clustering
+%performs kmeans clustering
 %>
 %> @param V: features for all train observations (dimension iNumFeatures x iNumObservations)
 %> @param k: number of clusters

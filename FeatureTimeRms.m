@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the RMS of a time domain signal
+%computes the RMS of a time domain signal
 %> called by ::ComputeFeature
 %>
 %> @param x: audio signal

@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the novelty function for onset detection
+%computes the novelty function for onset detection
 %>
 %> supported novelty measures are:
 %>  'Flux',

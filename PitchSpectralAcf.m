@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the maximum of the spectral autocorrelation function
+%computes the maximum of the spectral autocorrelation function
 %> called by ::ComputePitch
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)

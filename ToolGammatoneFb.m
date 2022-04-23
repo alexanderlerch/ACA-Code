@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes a gammatone filterbank
+%computes a gammatone filterbank
 %> see function MakeERBFilters.m from Slaneys Auditory Toolbox
 %>
 %> @param afAudioData: time domain sample data, dimension channels X samples

@@ -1,5 +1,5 @@
-% ======================================================================
-%> @brief nmf implementation inspired by https://github.com/cwu307/NmfDrumToolbox/blob/master/src/PfNmf.m
+%computes nmf (implementation inspired by
+%https://github.com/cwu307/NmfDrumToolbox/blob/master/src/PfNmf.m)
 %>
 %> @param X: non-negative matrix to factorize (usually ifreq x iObservations)
 %> @param iRank: nmf rank

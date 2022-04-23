@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes a mel spectrogram from the audio data
+%computes a mel spectrogram from the audio data
 %>
 %> @param x: time domain sample data, dimension channels X samples
 %> @param f_s: sample rate of audio data

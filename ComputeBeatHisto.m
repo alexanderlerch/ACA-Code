@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes a simple beat histogram
+%computes a simple beat histogram
 %>
 %> supported computation methods are:
 %>  'Corr',

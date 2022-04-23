@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of PitchTimeAmdf</title>
+  <meta name="keywords" content="PitchTimeAmdf">
+  <meta name="description" content="computes the lag of the average magnitude difference function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; PitchTimeAmdf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>PitchTimeAmdf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes the lag of the average magnitude difference function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [f_0, t] = PitchTimeAmdf(x, iBlockLength, iHopLength, f_s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes the lag of the average magnitude difference function
+&gt; called by ::ComputePitch
+&gt;
+&gt; @param x: audio signal
+&gt; @param iBlockLength: block length in samples
+&gt; @param iHopLength: hop length in samples
+&gt; @param f_s: sample rate of audio data 
+&gt;
+&gt; @retval f_0 amdf lag (in Hz)
+&gt; @retval t time stamp of f_0 estimate (in s)
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ToolBlockAudio.html" class="code" title="function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)">ToolBlockAudio</a>	blocks audio signal into overlapping blocks</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [AMDF] = amdf_I(x, eta_max)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes the lag of the average magnitude difference function</span>
+0002 <span class="comment">%&gt; called by ::ComputePitch</span>
+0003 <span class="comment">%&gt;</span>
+0004 <span class="comment">%&gt; @param x: audio signal</span>
+0005 <span class="comment">%&gt; @param iBlockLength: block length in samples</span>
+0006 <span class="comment">%&gt; @param iHopLength: hop length in samples</span>
+0007 <span class="comment">%&gt; @param f_s: sample rate of audio data</span>
+0008 <span class="comment">%&gt;</span>
+0009 <span class="comment">%&gt; @retval f_0 amdf lag (in Hz)</span>
+0010 <span class="comment">%&gt; @retval t time stamp of f_0 estimate (in s)</span>
+0011 <span class="comment">% ======================================================================</span>
+0012 <a name="_sub0" href="#_subfunctions" class="code">function [f_0, t] = PitchTimeAmdf(x, iBlockLength, iHopLength, f_s)</a>
+0013 
+0014     <span class="comment">% blocking</span>
+0015     [x_b, t] = <a href="ToolBlockAudio.html" class="code" title="function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)">ToolBlockAudio</a>(x, iBlockLength, iHopLength, f_s);
+0016     iNumOfBlocks = size(x_b, 1);
+0017     
+0018     <span class="comment">% allocate memory</span>
+0019     f_0 = zeros(1, iNumOfBlocks);
+0020 
+0021     <span class="comment">% initialization</span>
+0022     f_max = 2000;
+0023     f_min = 50;
+0024     eta_min = round(f_s/f_max);
+0025     eta_max = round(f_s/f_min);
+0026 
+0027     <span class="keyword">for</span> n = 1:iNumOfBlocks
+0028   
+0029         <span class="keyword">if</span> (sum(abs(x_b(n, :))) == 0)
+0030             f_0(n) = 0;
+0031             <span class="keyword">continue</span>;
+0032         <span class="keyword">end</span>
+0033         
+0034         <span class="comment">% calculate the amdf_I minimum</span>
+0035         afAMDF = <a href="#_sub1" class="code" title="subfunction [AMDF] = amdf_I(x, eta_max)">amdf_I</a>(x_b(n, :), eta_max);
+0036         [fDummy, T_0(n)] = min(afAMDF(1+eta_min:end));
+0037         
+0038         <span class="comment">% convert to Hz</span>
+0039         f_0(n) = f_s ./ (T_0(n) + eta_min);
+0040     <span class="keyword">end</span>
+0041 <span class="keyword">end</span>
+0042 
+0043 <a name="_sub1" href="#_subfunctions" class="code">function [AMDF] = amdf_I(x, eta_max)</a>
+0044     K = length(x);
+0045  
+0046     AMDF = ones(1, K);
+0047     
+0048     <span class="keyword">for</span> eta=0:min(K-1,eta_max-1)
+0049         AMDF(eta+1) = sum(abs(x(1:K-1-eta) - x(eta+2:end))) / K;
+0050     <span class="keyword">end</span>
+0051 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

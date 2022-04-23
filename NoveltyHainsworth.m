@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the novelty measure used by Hainsworth
+%computes the novelty measure used by Hainsworth
 %> called by ::ComputeNoveltyFunction
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)

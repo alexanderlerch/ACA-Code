@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief blocks audio signal into overlapping blocks
+%blocks audio signal into overlapping blocks
 %>
 %> @param x: audio signal (dimension length x 1)
 %> @param iBlockLength: target block size

@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the fundamental frequency of the (monophonic) audio
+%computes the fundamental frequency of the (monophonic) audio
 %>
 %> supported pitch trackers are:
 %>  'SpectralAcf',

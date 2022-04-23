@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the novelty measure per Spectral Flux
+%computes the novelty measure per Spectral Flux
 %> called by ::ComputeNoveltyFunction
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)

@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the maximum of the Harmonic Product Spectrum
+%computes the maximum of the Harmonic Product Spectrum
 %> called by ::ComputePitch
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)

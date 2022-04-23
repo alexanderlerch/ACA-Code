@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ToolBlockAudio</title>
+  <meta name="keywords" content="ToolBlockAudio">
+  <meta name="description" content="blocks audio signal into overlapping blocks">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ToolBlockAudio.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ToolBlockAudio
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>blocks audio signal into overlapping blocks</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">blocks audio signal into overlapping blocks
+&gt;
+&gt; @param x: audio signal (dimension length x 1)
+&gt; @param iBlockLength: target block size
+&gt; @param iHopLength: target hopsize
+&gt; @param f_s: sample rate
+&gt;
+&gt; @retval x_b (dimension iNumOfBlocks x iBlockLength)
+&gt; @retval t time stamps for blocks
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ComputeSpectrogram.html" class="code" title="function [X, f, t] = ComputeSpectrogram (x, f_s, afWindow, iBlockLength, iHopLength, bNormalize, bMagnitude)">ComputeSpectrogram</a>	computes a mel spectrogram from the audio data</li><li><a href="FeatureTimeAcfCoeff.html" class="code" title="function [vacf, t] = FeatureTimeAcfCoeff(x, iBlockLength, iHopLength, f_s, eta)">FeatureTimeAcfCoeff</a>	computes the ACF coefficients of a time domain signal</li><li><a href="FeatureTimeMaxAcf.html" class="code" title="function [vta, t] = FeatureTimeMaxAcf(x, iBlockLength, iHopLength, f_s, f_max, fMinThresh)">FeatureTimeMaxAcf</a>	computes the ACF maxima of a time domain signal</li><li><a href="FeatureTimePeakEnvelope.html" class="code" title="function [vppm, t] = FeatureTimePeakEnvelope(x, iBlockLength, iHopLength, f_s)">FeatureTimePeakEnvelope</a>	computes two peak envelope measures for a time domain signal</li><li><a href="FeatureTimeRms.html" class="code" title="function [vrms, t] = FeatureTimeRms(x, iBlockLength, iHopLength, f_s)">FeatureTimeRms</a>	computes the RMS of a time domain signal</li><li><a href="FeatureTimeStd.html" class="code" title="function [vstd, t] = FeatureTimeStd(x, iBlockLength, iHopLength, f_s)">FeatureTimeStd</a>	computes the standard deviation of a time domain signal</li><li><a href="FeatureTimeZeroCrossingRate.html" class="code" title="function [vzc, t] = FeatureTimeZeroCrossingRate(x, iBlockLength, iHopLength, f_s)">FeatureTimeZeroCrossingRate</a>	computes the zero crossing rate from a time domain signal</li><li><a href="PitchTimeAcf.html" class="code" title="function [f_0, t] = PitchTimeAcf(x, iBlockLength, iHopLength, f_s)">PitchTimeAcf</a>	computes the lag of the autocorrelation function</li><li><a href="PitchTimeAmdf.html" class="code" title="function [f_0, t] = PitchTimeAmdf(x, iBlockLength, iHopLength, f_s)">PitchTimeAmdf</a>	computes the lag of the average magnitude difference function</li><li><a href="PitchTimeZeroCrossings.html" class="code" title="function [f_0, t] = PitchTimeZeroCrossings(x, iBlockLength, iHopLength, f_s)">PitchTimeZeroCrossings</a>	computes f_0 through zero crossing distances</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%blocks audio signal into overlapping blocks</span>
+0002 <span class="comment">%&gt;</span>
+0003 <span class="comment">%&gt; @param x: audio signal (dimension length x 1)</span>
+0004 <span class="comment">%&gt; @param iBlockLength: target block size</span>
+0005 <span class="comment">%&gt; @param iHopLength: target hopsize</span>
+0006 <span class="comment">%&gt; @param f_s: sample rate</span>
+0007 <span class="comment">%&gt;</span>
+0008 <span class="comment">%&gt; @retval x_b (dimension iNumOfBlocks x iBlockLength)</span>
+0009 <span class="comment">%&gt; @retval t time stamps for blocks</span>
+0010 <span class="comment">% ======================================================================</span>
+0011 <a name="_sub0" href="#_subfunctions" class="code">function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)</a>
+0012     
+0013     iNumBlocks = ceil(size(x, 1)/iHopLength );
+0014     
+0015     <span class="comment">% time stamp vector</span>
+0016     t = (0:(iNumBlocks-1)) * iHopLength / f_s + iBlockLength/(2*f_s);
+0017     
+0018     <span class="comment">% pad with zeros just to make sure it runs for weird inputs, too</span>
+0019     xPadded = [x; zeros(iBlockLength+iHopLength, 1)];
+0020  
+0021     x_b = zeros(iNumBlocks, iBlockLength);
+0022     
+0023     <span class="keyword">for</span> n = 1:iNumBlocks
+0024         x_b(n, :) = xPadded((n-1)*iHopLength+1:(n-1)*iHopLength+iBlockLength);
+0025     <span class="keyword">end</span>
+0026 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

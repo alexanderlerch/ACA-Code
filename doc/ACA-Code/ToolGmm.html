@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ToolGmm</title>
+  <meta name="keywords" content="ToolGmm">
+  <meta name="description" content="gaussian mixture model">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ToolGmm.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ToolGmm
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>gaussian mixture model</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [mu, sigma, state] = ToolGmm(V, k, numMaxIter, prevState) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">gaussian mixture model
+&gt;
+&gt; @param FeatureMatrix: features for all train observations (dimension iNumFeatures x iNumObservations)
+&gt; @param k: number of gaussians
+&gt; @param numMaxIter: maximum number of iterations (stop if not converged before)
+&gt; @param prevState: internal state that can be stored to continue clustering later
+&gt;
+&gt; @retval mu means
+&gt; @retval sigma standard deviations
+&gt; @retval state result containing internal state (if needed)
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [state] = updateGaussians_I(FeatureMatrix,p,state)</a></li><li><a href="#_sub2" class="code">function [p] = computeProb_I(FeatureMatrix, state)</a></li><li><a href="#_sub3" class="code">function [state] = initState_I(FeatureMatrix,K)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%gaussian mixture model</span>
+0002 <span class="comment">%&gt;</span>
+0003 <span class="comment">%&gt; @param FeatureMatrix: features for all train observations (dimension iNumFeatures x iNumObservations)</span>
+0004 <span class="comment">%&gt; @param k: number of gaussians</span>
+0005 <span class="comment">%&gt; @param numMaxIter: maximum number of iterations (stop if not converged before)</span>
+0006 <span class="comment">%&gt; @param prevState: internal state that can be stored to continue clustering later</span>
+0007 <span class="comment">%&gt;</span>
+0008 <span class="comment">%&gt; @retval mu means</span>
+0009 <span class="comment">%&gt; @retval sigma standard deviations</span>
+0010 <span class="comment">%&gt; @retval state result containing internal state (if needed)</span>
+0011 <span class="comment">% ======================================================================</span>
+0012 <a name="_sub0" href="#_subfunctions" class="code">function [mu, sigma, state] = ToolGmm(V, k, numMaxIter, prevState)</a>
+0013     
+0014     <span class="keyword">if</span> (nargin &lt; 3)
+0015         numMaxIter  = 1000;
+0016     <span class="keyword">end</span>
+0017     <span class="keyword">if</span> (nargin == 4)
+0018         state = prevState;
+0019     <span class="keyword">else</span>
+0020         <span class="comment">% initialize state</span>
+0021         state = <a href="#_sub3" class="code" title="subfunction [state] = initState_I(FeatureMatrix,K)">initState_I</a>(V, k);
+0022     <span class="keyword">end</span>
+0023     
+0024     <span class="keyword">for</span> j = 1:numMaxIter
+0025         prevState = state;
+0026         
+0027         <span class="comment">% compute weighted gaussian</span>
+0028         p = <a href="#_sub2" class="code" title="subfunction [p] = computeProb_I(FeatureMatrix, state)">computeProb_I</a>(V, state);
+0029         
+0030         <span class="comment">% update clusters</span>
+0031         state = <a href="#_sub1" class="code" title="subfunction [state] = updateGaussians_I(FeatureMatrix,p,state)">updateGaussians_I</a>(V, p, state);
+0032          
+0033         <span class="comment">% if we have converged, break</span>
+0034         <span class="keyword">if</span> (max(sum(abs(state.m-prevState.m))) &lt;= 1e-20)
+0035             <span class="keyword">break</span>;
+0036         <span class="keyword">end</span>
+0037     <span class="keyword">end</span>
+0038     
+0039     mu = state.m;
+0040     sigma = state.sigma;
+0041 <span class="keyword">end</span>
+0042 
+0043 <a name="_sub1" href="#_subfunctions" class="code">function [state] = updateGaussians_I(FeatureMatrix,p,state)</a>
+0044 
+0045     <span class="comment">% number of clusters</span>
+0046     K = size(state.m, 2);
+0047  
+0048     <span class="comment">% update priors</span>
+0049     state.prior = mean(p, 1)';
+0050 
+0051     <span class="keyword">for</span> k = 1:K
+0052         s = 0;
+0053         
+0054         <span class="comment">% update means</span>
+0055         state.m(:, k) = FeatureMatrix * p(:, k) / sum(p(:, k));
+0056         
+0057         <span class="comment">% subtract mean</span>
+0058         F = FeatureMatrix - repmat(state.m(:, k), 1, size(FeatureMatrix, 2));
+0059         
+0060         <span class="keyword">for</span> n = 1:size(FeatureMatrix, 2)
+0061             s = s + p(n, k) * (F(:, n) * F(:, n)');
+0062         <span class="keyword">end</span>
+0063         state.sigma(:, :, k) = s / sum(p(:, k));
+0064     <span class="keyword">end</span>
+0065 <span class="keyword">end</span>
+0066 
+0067 <a name="_sub2" href="#_subfunctions" class="code">function [p] = computeProb_I(FeatureMatrix, state)</a>
+0068 
+0069     K = size(state.m, 2);
+0070     p = zeros(size(FeatureMatrix, 2), K);
+0071     
+0072     <span class="comment">% for each cluster</span>
+0073     <span class="keyword">for</span> k = 1:K
+0074         <span class="comment">% subtract mean</span>
+0075         F = FeatureMatrix - repmat(state.m(:, k), 1, size(FeatureMatrix, 2));
+0076 
+0077         <span class="comment">% weighted gaussian</span>
+0078         p(:, k) = 1 / sqrt((2*pi)^size(F, 1) * det(state.sigma(:, :, k))) *<span class="keyword">...</span>
+0079             exp(-1/2 * sum((F .* (inv(state.sigma(:, :, k)) * F)), 1)');
+0080         p(:, k) = state.prior(k) * p(:, k);
+0081     <span class="keyword">end</span>
+0082     
+0083     <span class="comment">% norm over clusters</span>
+0084     p = p ./ repmat(sum(p,2),1,K);
+0085 <span class="keyword">end</span>
+0086 
+0087 <a name="_sub3" href="#_subfunctions" class="code">function [state] = initState_I(FeatureMatrix,K)</a>
+0088 
+0089     <span class="comment">%init</span>
+0090     m       = zeros(size(FeatureMatrix,1), K);
+0091     sigma   = zeros(size(FeatureMatrix,1), size(FeatureMatrix,1), K);
+0092     prior   = zeros(1,K);
+0093 
+0094     <span class="comment">% pick random points as cluster means</span>
+0095     mIdx    = round(rand(1,K)*(size(FeatureMatrix,2)-1))+1;
+0096  
+0097     <span class="comment">% assign means etc.</span>
+0098     m       = FeatureMatrix(:,mIdx);
+0099     prior   = ones(1,K)/K;
+0100     sigma   = repmat(cov(FeatureMatrix'),1,1,K);
+0101 
+0102     <span class="comment">% write initial state</span>
+0103     state   = struct(<span class="string">'m'</span>,m,<span class="string">'sigma'</span>,sigma,<span class="string">'prior'</span>,prior);
+0104 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

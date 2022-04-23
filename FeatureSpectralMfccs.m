@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the MFCCs from the magnitude spectrum (see Slaney)
+%computes the MFCCs from the magnitude spectrum (see Slaney)
 %> called by ::ComputeFeature
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)

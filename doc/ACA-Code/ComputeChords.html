@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ComputeChords</title>
+  <meta name="keywords" content="ComputeChords">
+  <meta name="description" content="computes the chords of the input audio (super simple variant)">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ComputeChords.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ComputeChords
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes the chords of the input audio (super simple variant)</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (x, f_s, iBlockLength, iHopLength) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes the chords of the input audio (super simple variant)
+&gt;
+&gt; @param x: time domain sample data, dimension samples X channels
+&gt; @param f_s: sample rate of audio data
+&gt; @param iBlockLength: internal block length (default: 4096 samples)
+&gt; @param iHopLength: internal hop length (default: 2048 samples)
+&gt;
+&gt; @retval cChordLabel likeliest chord string (e.g., C Maj)
+&gt; @retval iChordIdx likeliest chord index (Major: 0:11, minor: 12:23, starting from C, dimensions 2 X number of blocks: first row are the raw results without post-processing, second row are the postprocessed results)
+&gt; @retval t timestamps for each result (length blocks)
+&gt; @retval afChordProbs raw chord probability matrix (dimension 24 X blocks)
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ComputeFeature.html" class="code" title="function [v, t] = ComputeFeature (cFeatureName, x, f_s, afWindow, iBlockLength, iHopLength)">ComputeFeature</a>	computes a feature from the audio data</li><li><a href="ToolNormalizeAudio.html" class="code" title="function [x_norm] = ToolNormalizeAudio(x)">ToolNormalizeAudio</a>	normalizes audio signal</li><li><a href="ToolViterbi.html" class="code" title="function [p, P_res] = ToolViterbi(P_E, P_T, p_s, bUseLogLikelihood)">ToolViterbi</a>	computes path through a probability matrix with Viterbi</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [T] = generateTemplateMatrix_I ()</a></li><li><a href="#_sub2" class="code">function [P_T] = getChordTransProb_I()</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes the chords of the input audio (super simple variant)</span>
+0002 <span class="comment">%&gt;</span>
+0003 <span class="comment">%&gt; @param x: time domain sample data, dimension samples X channels</span>
+0004 <span class="comment">%&gt; @param f_s: sample rate of audio data</span>
+0005 <span class="comment">%&gt; @param iBlockLength: internal block length (default: 4096 samples)</span>
+0006 <span class="comment">%&gt; @param iHopLength: internal hop length (default: 2048 samples)</span>
+0007 <span class="comment">%&gt;</span>
+0008 <span class="comment">%&gt; @retval cChordLabel likeliest chord string (e.g., C Maj)</span>
+0009 <span class="comment">%&gt; @retval iChordIdx likeliest chord index (Major: 0:11, minor: 12:23, starting from C, dimensions 2 X number of blocks: first row are the raw results without post-processing, second row are the postprocessed results)</span>
+0010 <span class="comment">%&gt; @retval t timestamps for each result (length blocks)</span>
+0011 <span class="comment">%&gt; @retval afChordProbs raw chord probability matrix (dimension 24 X blocks)</span>
+0012 <span class="comment">% ======================================================================</span>
+0013 <a name="_sub0" href="#_subfunctions" class="code">function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (x, f_s, iBlockLength, iHopLength)</a>
+0014 
+0015     <span class="comment">% set default parameters if necessary</span>
+0016     <span class="keyword">if</span> (nargin &lt; 5)
+0017         iHopLength = 2048;
+0018     <span class="keyword">end</span>
+0019     <span class="keyword">if</span> (nargin &lt; 4)
+0020         iBlockLength = 8192;
+0021     <span class="keyword">end</span>
+0022 
+0023     <span class="comment">% chord names</span>
+0024     cChords  = char (<span class="string">'C Maj'</span>,<span class="string">'C# Maj'</span>,<span class="string">'D Maj'</span>,<span class="string">'D# Maj'</span>,<span class="string">'E Maj'</span>,<span class="string">'F Maj'</span>,<span class="keyword">...</span>
+0025         <span class="string">'F# Maj'</span>,<span class="string">'G Maj'</span>,<span class="string">'G# Maj'</span>,<span class="string">'A Maj'</span>,<span class="string">'A# Maj'</span>,<span class="string">'B Maj'</span>, <span class="string">'c min'</span>,<span class="keyword">...</span>
+0026         <span class="string">'c# min'</span>,<span class="string">'d min'</span>,<span class="string">'d# min'</span>,<span class="string">'e min'</span>,<span class="string">'f min'</span>,<span class="string">'f# min'</span>,<span class="string">'g min'</span>,<span class="keyword">...</span>
+0027         <span class="string">'g# min'</span>,<span class="string">'a min'</span>,<span class="string">'a# min'</span>,<span class="string">'b min'</span>);
+0028  
+0029     <span class="comment">% chord templates</span>
+0030     [T] = <a href="#_sub1" class="code" title="subfunction [T] = generateTemplateMatrix_I ()">generateTemplateMatrix_I</a> ();
+0031     
+0032     <span class="comment">% transition probabilities</span>
+0033     [P_T] = <a href="#_sub2" class="code" title="subfunction [P_T] = getChordTransProb_I()">getChordTransProb_I</a> ();
+0034     
+0035     <span class="comment">% pre-processing: normalization</span>
+0036     x = <a href="ToolNormalizeAudio.html" class="code" title="function [x_norm] = ToolNormalizeAudio(x)">ToolNormalizeAudio</a>(x);
+0037 
+0038     <span class="comment">% extract pitch chroma</span>
+0039     [v_pc, t] = <a href="ComputeFeature.html" class="code" title="function [v, t] = ComputeFeature (cFeatureName, x, f_s, afWindow, iBlockLength, iHopLength)">ComputeFeature</a> (<span class="string">'SpectralPitchChroma'</span>,<span class="keyword">...</span>
+0040                                 x,<span class="keyword">...</span>
+0041                                 f_s,<span class="keyword">...</span>
+0042                                 [],<span class="keyword">...</span>
+0043                                 iBlockLength,<span class="keyword">...</span>
+0044                                 iHopLength);
+0045 
+0046     <span class="comment">% estimate chord probabilities</span>
+0047     P_E = T * v_pc;
+0048     P_E = P_E ./ sum(P_E, 1);
+0049     
+0050     <span class="comment">% assign series of labels/indices starting with 0</span>
+0051     aiChordIdx = zeros(2, length(t));
+0052     [~, aiChordIdx(1,:)] = max(P_E, [], 1);
+0053 
+0054     <span class="comment">% compute path with Viterbi algorithm</span>
+0055     [aiChordIdx(2,:), ~] = <a href="ToolViterbi.html" class="code" title="function [p, P_res] = ToolViterbi(P_E, P_T, p_s, bUseLogLikelihood)">ToolViterbi</a>(P_E,<span class="keyword">...</span>
+0056                                 P_T,<span class="keyword">...</span>
+0057                                 ones(length(cChords),1)/length(cChords),<span class="keyword">...</span>
+0058                                 true);
+0059                             
+0060     <span class="comment">% assign result string</span>
+0061     cChordLabel = deblank(cChords(aiChordIdx,:));
+0062     <span class="comment">% we want to start with 0!</span>
+0063     aiChordIdx = aiChordIdx - 1; 
+0064 <span class="keyword">end</span>
+0065 
+0066 <a name="_sub1" href="#_subfunctions" class="code">function [T] = generateTemplateMatrix_I ()</a>
+0067     
+0068     <span class="comment">% init: 12 major and 12 minor triads</span>
+0069     T = zeros(24,12);
+0070     
+0071     <span class="comment">% all chord pitches are weighted equally</span>
+0072     T(1, [1 5 8]) = 1/3;
+0073     T(13, [1 4 8]) = 1/3;
+0074     
+0075     <span class="comment">% generate templates for all root notes</span>
+0076     <span class="keyword">for</span> i = 1:11
+0077         T(i+1, :) = circshift(T(i, :), 1, 2);
+0078         T(i+13, :) = circshift(T(i+12, :), 1, 2);
+0079     <span class="keyword">end</span>
+0080 <span class="keyword">end</span>
+0081 
+0082 <a name="_sub2" href="#_subfunctions" class="code">function [P_T] = getChordTransProb_I()</a>
+0083  
+0084     <span class="comment">% circle of fifth tonic distances</span>
+0085     circ = [0 -5 2 -3 4 -1 6 1 -4 3 -2 5,<span class="keyword">...</span>
+0086             -3 4 -1 6 1 -4 3 -2 5 0 -5 2];
+0087         
+0088     <span class="comment">% set the circle radius and distance</span>
+0089     R = 1;
+0090     d = .5;
+0091 
+0092     <span class="comment">% generate key coordinates (mode in z)</span>
+0093     x = R * cos(2 * pi * circ / 12);
+0094     y = R * sin(2 * pi * circ / 12);
+0095     z = [d * ones(1,12),<span class="keyword">...</span>
+0096         zeros(1,12)];
+0097  
+0098     <span class="comment">% compute key distances</span>
+0099     <span class="keyword">for</span> (m = 1:size(x, 2))
+0100         <span class="keyword">for</span> (n = 1:size(x, 2))
+0101             P_T(m, n) = sqrt((x(m)-x(n))^2 + (y(m)-y(n))^2 + (z(m)-z(n))^2);
+0102         <span class="keyword">end</span>
+0103     <span class="keyword">end</span>
+0104 
+0105     <span class="comment">% convert distances into 'probabilities'</span>
+0106     P_T = .1 + P_T;
+0107     P_T = 1 - P_T / (.1 + max(max(P_T)));
+0108     P_T = P_T ./ sum(P_T, 1);
+0109 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

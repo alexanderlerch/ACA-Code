@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ComputeFingerprint</title>
+  <meta name="keywords" content="ComputeFingerprint">
+  <meta name="description" content="computes a fingerprint of the audio data (only the subfingerprint, one">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ComputeFingerprint.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ComputeFingerprint
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes a fingerprint of the audio data (only the subfingerprint, one</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [SubFingerprint, tf] = ComputeFingerprint (x, f_s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes a fingerprint of the audio data (only the subfingerprint, one
+fingerprint is comprised of 256 consecutive subfingerprints.
+&gt;
+&gt; @param x: time domain sample data, 
+&gt; @param f_s: sample rate of audio data
+&gt;
+&gt; @retval F series of subfingerprints
+&gt; @retval tf time stamps for the subfingerprints
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ComputeSpectrogram.html" class="code" title="function [X, f, t] = ComputeSpectrogram (x, f_s, afWindow, iBlockLength, iHopLength, bNormalize, bMagnitude)">ComputeSpectrogram</a>	computes a mel spectrogram from the audio data</li><li><a href="ToolDownmix.html" class="code" title="function [x_downmix] = ToolDownmix(x)">ToolDownmix</a>	downmixes audio signal</li><li><a href="ToolNormalizeAudio.html" class="code" title="function [x_norm] = ToolNormalizeAudio(x)">ToolNormalizeAudio</a>	normalizes audio signal</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [H] = generateBands_I(iFFTLength, f_s)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes a fingerprint of the audio data (only the subfingerprint, one</span>
+0002 <span class="comment">%fingerprint is comprised of 256 consecutive subfingerprints.</span>
+0003 <span class="comment">%&gt;</span>
+0004 <span class="comment">%&gt; @param x: time domain sample data,</span>
+0005 <span class="comment">%&gt; @param f_s: sample rate of audio data</span>
+0006 <span class="comment">%&gt;</span>
+0007 <span class="comment">%&gt; @retval F series of subfingerprints</span>
+0008 <span class="comment">%&gt; @retval tf time stamps for the subfingerprints</span>
+0009 <span class="comment">% ======================================================================</span>
+0010 <a name="_sub0" href="#_subfunctions" class="code">function [SubFingerprint, tf] = ComputeFingerprint (x, f_s)</a>
+0011 
+0012     <span class="comment">% set default parameters</span>
+0013     target_fs = 5000;
+0014     iBlockLength = 2048;
+0015     iHopLength = 64;
+0016   
+0017     <span class="comment">% pre-processing: down-mixing</span>
+0018     x = <a href="ToolDownmix.html" class="code" title="function [x_downmix] = ToolDownmix(x)">ToolDownmix</a>(x);
+0019 
+0020     <span class="comment">% pre-processing: normalization (not really necessary here)</span>
+0021     x = <a href="ToolNormalizeAudio.html" class="code" title="function [x_norm] = ToolNormalizeAudio(x)">ToolNormalizeAudio</a>(x);
+0022 
+0023     <span class="comment">% pre-processing: downsampling to target sample rate</span>
+0024     <span class="keyword">if</span> (f_s ~= target_fs)
+0025         x = resample(x, target_fs, f_s);
+0026     <span class="keyword">end</span>
+0027 
+0028     <span class="comment">% initialization: generate transformation matrix for 33 frequency bands</span>
+0029     H = <a href="#_sub1" class="code" title="subfunction [H] = generateBands_I(iFFTLength, f_s)">generateBands_I</a>(iBlockLength, target_fs);
+0030     
+0031     <span class="comment">% initialization: generate FFT window</span>
+0032     afWindow = hann(iBlockLength, <span class="string">'periodic'</span>);
+0033     <span class="keyword">if</span> (length(afWindow) ~= iBlockLength)
+0034         error(<span class="string">'window length mismatch'</span>);
+0035     <span class="keyword">end</span>                        
+0036 
+0037     <span class="comment">% in the real world, we would do this block by block...</span>
+0038     [X, f, tf] = <a href="ComputeSpectrogram.html" class="code" title="function [X, f, t] = ComputeSpectrogram (x, f_s, afWindow, iBlockLength, iHopLength, bNormalize, bMagnitude)">ComputeSpectrogram</a>(x, <span class="keyword">...</span>
+0039                                 f_s, <span class="keyword">...</span>
+0040                                 afWindow, <span class="keyword">...</span>
+0041                                 iBlockLength, <span class="keyword">...</span>
+0042                                 iHopLength);
+0043 
+0044     <span class="comment">% power spectrum</span>
+0045     X = abs(X) * 2 / iBlockLength;
+0046     X([1 end], :) = X([1 end], :) / sqrt(2); <span class="comment">% normalization</span>
+0047     X = abs(X).^2;
+0048     
+0049     <span class="comment">% group spectral bins in bands</span>
+0050     E = H * X;
+0051     
+0052     <span class="comment">% extract fingerprint through diff (both time and freq)</span>
+0053     SubFingerprint = diff(diff(E, 1, 1), 1, 2);
+0054     tf = tf(1:end-1) + iHopLength / (2 * target_fs);
+0055 
+0056     <span class="comment">% quantize fingerprint</span>
+0057     SubFingerprint(SubFingerprint&lt;0) = 0;
+0058     SubFingerprint(SubFingerprint&gt;0) = 1;
+0059 <span class="keyword">end</span>
+0060 
+0061 <a name="_sub1" href="#_subfunctions" class="code">function [H] = generateBands_I(iFFTLength, f_s)</a>
+0062 
+0063     <span class="comment">% constants</span>
+0064     iNumBands   = 33;
+0065     f_max       = 2000;
+0066     f_min       = 300;
+0067     
+0068     <span class="comment">% initialize</span>
+0069     f_band_bounds   = f_min * exp(log(f_max / f_min)*(0:iNumBands) / iNumBands);
+0070     f_fft           = linspace(0, f_s/2, iFFTLength/2+1);
+0071     H               = zeros(iNumBands, iFFTLength/2+1);
+0072     idx             = zeros(length(f_band_bounds), 2);
+0073 
+0074     <span class="comment">% get indices falling into each band</span>
+0075     <span class="keyword">for</span> k = 1:length(f_band_bounds)-1
+0076         idx(k, 1) = find(f_fft &gt; f_band_bounds(k), 1, <span class="string">'first'</span> );
+0077         idx(k, 2) = find(f_fft &lt; f_band_bounds(k+1), 1, <span class="string">'last'</span> );
+0078         H(k,idx(k, 1):idx(k, 2)) = 1;
+0079     <span class="keyword">end</span>
+0080 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

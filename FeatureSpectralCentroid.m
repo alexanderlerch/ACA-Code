@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the spectral centroid from the (squared) magnitude spectrum
+%computes the spectral centroid from the (squared) magnitude spectrum
 %> called by ::ComputeFeature
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)

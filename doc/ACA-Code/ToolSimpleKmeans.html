@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ToolSimpleKmeans</title>
+  <meta name="keywords" content="ToolSimpleKmeans">
+  <meta name="description" content="performs kmeans clustering">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ToolSimpleKmeans.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ToolSimpleKmeans
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>performs kmeans clustering</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [clusterIdx, state] = ToolSimpleKmeans(V, K, numMaxIter, prevState) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">performs kmeans clustering
+&gt;
+&gt; @param V: features for all train observations (dimension iNumFeatures x iNumObservations)
+&gt; @param k: number of clusters
+&gt; @param numMaxIter: maximum number of iterations (stop if not converged before)
+&gt; @param prevState: internal state that can be stored to continue clustering later
+&gt;
+&gt; @retval clusterIdx cluster index of each observation
+&gt; @retval state internal state (only if needed)
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [clusterIdx]  = assignClusterLabels_I(V, state)</a></li><li><a href="#_sub2" class="code">function [state] = computeClusterMeans_I(V, clusterIdx, K)</a></li><li><a href="#_sub3" class="code">function  [state] = reinitState_I(state, clusterIdx, K, range)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%performs kmeans clustering</span>
+0002 <span class="comment">%&gt;</span>
+0003 <span class="comment">%&gt; @param V: features for all train observations (dimension iNumFeatures x iNumObservations)</span>
+0004 <span class="comment">%&gt; @param k: number of clusters</span>
+0005 <span class="comment">%&gt; @param numMaxIter: maximum number of iterations (stop if not converged before)</span>
+0006 <span class="comment">%&gt; @param prevState: internal state that can be stored to continue clustering later</span>
+0007 <span class="comment">%&gt;</span>
+0008 <span class="comment">%&gt; @retval clusterIdx cluster index of each observation</span>
+0009 <span class="comment">%&gt; @retval state internal state (only if needed)</span>
+0010 <span class="comment">% ======================================================================</span>
+0011 <a name="_sub0" href="#_subfunctions" class="code">function [clusterIdx, state] = ToolSimpleKmeans(V, K, numMaxIter, prevState)</a>
+0012     
+0013     <span class="keyword">if</span> (nargin &lt; 3)
+0014         numMaxIter = 1000;
+0015     <span class="keyword">end</span>
+0016     <span class="keyword">if</span> (nargin == 4)
+0017         state = prevState;
+0018     <span class="keyword">else</span>
+0019         <span class="comment">% initialize</span>
+0020         <span class="comment">% use fixed seed for reproducibility (comment out if needed)</span>
+0021         <span class="comment">%rng(42);</span>
+0022         
+0023         <span class="comment">% pick random observations as cluster means</span>
+0024         state = struct(<span class="string">'m'</span>, V(:, round(rand(1, K) * (size(V, 2)-1))+1)); 
+0025     <span class="keyword">end</span>
+0026     range_V = [min(V, [], 2) max(V, [], 2)];
+0027     
+0028     <span class="comment">% assign observations to clusters</span>
+0029     clusterIdx = <a href="#_sub1" class="code" title="subfunction [clusterIdx]  = assignClusterLabels_I(V, state)">assignClusterLabels_I</a>(V, state);
+0030     
+0031     <span class="keyword">for</span> i=1:numMaxIter
+0032         prevState = state;
+0033         
+0034         <span class="comment">% update means</span>
+0035         state = <a href="#_sub2" class="code" title="subfunction [state] = computeClusterMeans_I(V, clusterIdx, K)">computeClusterMeans_I</a>(V, clusterIdx, K);
+0036         
+0037         <span class="comment">% reinitialize empty clusters</span>
+0038         state = <a href="#_sub3" class="code" title="subfunction  [state] = reinitState_I(state, clusterIdx, K, range)">reinitState_I</a>(state, clusterIdx, K, range_V);
+0039         
+0040         <span class="comment">% assign observations to clusters</span>
+0041         clusterIdx = <a href="#_sub1" class="code" title="subfunction [clusterIdx]  = assignClusterLabels_I(V, state)">assignClusterLabels_I</a>(V, state);
+0042         
+0043         <span class="comment">% if we have converged, break</span>
+0044         <span class="keyword">if</span> (max(sum(abs(state.m-prevState.m)))==0)
+0045             <span class="keyword">break</span>;
+0046         <span class="keyword">end</span>
+0047     <span class="keyword">end</span>
+0048 <span class="keyword">end</span>
+0049 
+0050 <a name="_sub1" href="#_subfunctions" class="code">function [clusterIdx]  = assignClusterLabels_I(V, state)</a>
+0051 
+0052     K = size(state.m, 2);
+0053     
+0054     <span class="comment">% compute distance to all points</span>
+0055     <span class="keyword">for</span> k = 1:K
+0056         D(k, :) = sqrt(sum((repmat(state.m(:, k), 1, size(V, 2))-V).^2, 1));
+0057     <span class="keyword">end</span>
+0058     
+0059     <span class="comment">% assign to closest</span>
+0060     [dummy, clusterIdx] = min(D, [], 1);
+0061 <span class="keyword">end</span>
+0062 
+0063 <a name="_sub2" href="#_subfunctions" class="code">function [state] = computeClusterMeans_I(V, clusterIdx, K)</a>
+0064     m = zeros(size(V, 1), K);
+0065     <span class="keyword">for</span> k = 1:K
+0066         <span class="keyword">if</span>~(isempty(find(clusterIdx==k)))
+0067             m(:, k) = mean(V(:,find(clusterIdx==k)), 2);
+0068         <span class="keyword">end</span>
+0069     <span class="keyword">end</span>
+0070     state = struct(<span class="string">'m'</span>,m);
+0071 <span class="keyword">end</span>
+0072 
+0073 <a name="_sub3" href="#_subfunctions" class="code">function  [state] = reinitState_I(state, clusterIdx, K, range)</a>
+0074     <span class="keyword">for</span> k = 1:K
+0075         <span class="keyword">if</span>(isempty(find(clusterIdx==k)))
+0076             state.m(:, k) = rand(size(state, 1), 1).*(range(:, 2)-range(:, 1)) + range(:, 1);
+0077         <span class="keyword">end</span>
+0078     <span class="keyword">end</span>
+0079 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

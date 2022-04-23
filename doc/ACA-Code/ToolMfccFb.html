@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ToolMfccFb</title>
+  <meta name="keywords" content="ToolMfccFb">
+  <meta name="description" content="&gt; see function mfcc.m from Slaneys Auditory Toolbox">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ToolMfccFb.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ToolMfccFb
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>&gt; see function mfcc.m from Slaneys Auditory Toolbox</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [H] = ToolMfccFb (iFftLength, f_s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">&gt; see function mfcc.m from Slaneys Auditory Toolbox</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="FeatureSpectralMfccs.html" class="code" title="function [vmfcc] = FeatureSpectralMfccs(X, f_s)">FeatureSpectralMfccs</a>	computes the MFCCs from the magnitude spectrum (see Slaney)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%&gt; see function mfcc.m from Slaneys Auditory Toolbox</span>
+0002 <a name="_sub0" href="#_subfunctions" class="code">function [H] = ToolMfccFb (iFftLength, f_s)</a>
+0003 
+0004     <span class="comment">% initialization</span>
+0005     f_start         = 133.3333;
+0006     
+0007     iNumLinFilters  = 13;
+0008     iNumLogFilters  = 27;
+0009     iNumFilters     = iNumLinFilters + iNumLogFilters;
+0010 
+0011     linearSpacing   = 66.66666666;
+0012     logSpacing      = 1.0711703;
+0013 
+0014     <span class="comment">% compute band frequencies</span>
+0015     f               = f_start + (0:iNumLinFilters-1)*linearSpacing;
+0016     f(iNumLinFilters+1:iNumFilters+2) = <span class="keyword">...</span>
+0017               f(iNumLinFilters) * logSpacing.^(1:iNumLogFilters+2);
+0018 
+0019     <span class="comment">% sanity check</span>
+0020     f               = f (f&lt;f_s/2);
+0021     iNumFilters     = length(f)-2;
+0022     
+0023     f_l             = f(1:iNumFilters);
+0024     f_c             = f(2:iNumFilters+1);
+0025     f_u             = f(3:iNumFilters+2);
+0026 
+0027     <span class="comment">% allocate memory for filters and set max amplitude</span>
+0028     H               = zeros(iNumFilters,iFftLength);
+0029     afFilterMax     = 2./(f_u-f_l);
+0030     f_k             = (0:iFftLength-1)/(iFftLength-1)*f_s/2;
+0031 
+0032     <span class="comment">% compute the transfer functions</span>
+0033     <span class="keyword">for</span> (c = 1:iNumFilters)
+0034         H(c,:)      = <span class="keyword">...</span>
+0035             (f_k &gt; f_l(c) &amp; f_k &lt;= f_c(c)).* <span class="keyword">...</span>
+0036             afFilterMax(c).*(f_k-f_l(c))/(f_c(c)-f_l(c)) + <span class="keyword">...</span>
+0037             (f_k &gt; f_c(c) &amp; f_k &lt; f_u(c)).* <span class="keyword">...</span>
+0038             afFilterMax(c).*(f_u(c)-f_k)/(f_u(c)-f_c(c));
+0039     <span class="keyword">end</span>
+0040 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

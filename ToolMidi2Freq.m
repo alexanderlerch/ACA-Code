@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief converts MIDI pitch to frequency
+%converts MIDI pitch to frequency
 %>
 %> @param p: MIDI pitch
 %> @param f_A4: tuning frequency

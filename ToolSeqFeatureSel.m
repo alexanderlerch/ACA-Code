@@ -1,5 +1,5 @@
-% ======================================================================
-%> @brief Leave One Out Cross Validation with Nearest Neighbor Classifier
+%computes Sequential Forward Feature Selection wrapping a nearest neighbor
+%classifier
 %>
 %> @param V: features (dimension iNumFeatures x iNumObservations)
 %> @param ClassIdx: vector with class indices (length iNumObservations)

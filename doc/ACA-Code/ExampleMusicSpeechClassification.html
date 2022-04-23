@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ExampleMusicSpeechClassification</title>
+  <meta name="keywords" content="ExampleMusicSpeechClassification">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ExampleMusicSpeechClassification.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ExampleMusicSpeechClassification
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function ExampleMusicSpeechClassification(cDatasetPath) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ComputeFeature.html" class="code" title="function [v, t] = ComputeFeature (cFeatureName, x, f_s, afWindow, iBlockLength, iHopLength)">ComputeFeature</a>	computes a feature from the audio data</li><li><a href="ToolLooCrossVal.html" class="code" title="function [Acc, conf_mat] = ToolLooCrossVal(FeatureMatrix, ClassIdx)">ToolLooCrossVal</a>	Leave One Out Cross Validation with Nearest Neighbor Classifier</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [v] = ExtractFeaturesFromFile_I(cFilePath)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function ExampleMusicSpeechClassification(cDatasetPath)</a>
+0002 
+0003     <span class="keyword">if</span> (nargin&lt;1)
+0004         <span class="comment">% this script is written for the GTZAN music/speech dataset</span>
+0005         <span class="comment">% modify this path or use the function parameter to specify your</span>
+0006         <span class="comment">% dataset path</span>
+0007         cDatasetPath = <span class="string">'d:\dataset\music_speech\'</span>; 
+0008     <span class="keyword">end</span>
+0009     <span class="keyword">if</span> (exist(<span class="string">'ComputeFeature'</span>) ~= 2)
+0010         error(<span class="string">'Please add the ACA scripts (https://github.com/alexanderlerch/ACA-Code) to your path!'</span>);
+0011     <span class="keyword">end</span>
+0012     <span class="keyword">if</span> ((exist([cDatasetPath <span class="string">'music'</span>]) ~= 7) || (exist([cDatasetPath <span class="string">'speech'</span>]) ~= 7))
+0013         error(<span class="string">'Dataset path wrong or does not contain music/speech folders!'</span>)
+0014     <span class="keyword">end</span>
+0015     
+0016     iNumFeatures = 2;
+0017     
+0018     <span class="comment">% read directory contents</span>
+0019     music_files = dir([cDatasetPath <span class="string">'music/*.au'</span>]);
+0020     speech_files = dir([cDatasetPath <span class="string">'speech/*.au'</span>]);
+0021  
+0022     v_music = zeros(iNumFeatures,size(music_files,1));
+0023     v_speech = zeros(iNumFeatures,size(speech_files,1)); 
+0024     
+0025     <span class="comment">% extract features, this may take a while...</span>
+0026     <span class="keyword">for</span> i = 1:size(music_files, 1)
+0027         v_music(:, i) = <a href="#_sub1" class="code" title="subfunction [v] = ExtractFeaturesFromFile_I(cFilePath)">ExtractFeaturesFromFile_I</a>(<span class="keyword">...</span>
+0028             [cDatasetPath <span class="string">'music/'</span> music_files(i).name]);
+0029     <span class="keyword">end</span>
+0030     <span class="keyword">for</span> i = 1:size(speech_files, 1)
+0031         v_speech(:, i) = <a href="#_sub1" class="code" title="subfunction [v] = ExtractFeaturesFromFile_I(cFilePath)">ExtractFeaturesFromFile_I</a>(<span class="keyword">...</span>
+0032             [cDatasetPath <span class="string">'speech/'</span> speech_files(i).name]);
+0033     <span class="keyword">end</span>
+0034     
+0035     <span class="comment">% assign class labels for training and eval</span>
+0036     C = [zeros(1, size(music_files, 1)) ones(1, size(speech_files, 1))];
+0037 
+0038     <span class="comment">% normalize features</span>
+0039     v = [v_music, v_speech];
+0040     m = mean(v, 2);
+0041     s = std(v, 0, 2);
+0042     v = (v - repmat(m, 1, size(music_files, 1) + size(speech_files, 1)))./<span class="keyword">...</span>
+0043         repmat(s, 1, size(music_files, 1)+size(speech_files, 1));
+0044   
+0045     <span class="comment">% compute the overall accuracy with cross validation</span>
+0046     [acc, mat] = <a href="ToolLooCrossVal.html" class="code" title="function [Acc, conf_mat] = ToolLooCrossVal(FeatureMatrix, ClassIdx)">ToolLooCrossVal</a>(v, C);
+0047     
+0048     disp(<span class="string">'confusion matrix:'</span>),
+0049     disp(mat);
+0050 
+0051     disp(<span class="string">'micro accuracy:'</span>), 
+0052     disp(sum(diag(mat)) / sum(sum(mat)))
+0053     tmp = zeros(size(mat, 1), 1);
+0054     <span class="keyword">for</span> i = 1:size(mat, 1)
+0055         tmp(i) = mat(i, i) / sum(mat(i, :));
+0056     <span class="keyword">end</span>
+0057     disp(<span class="string">'macro accuracy:'</span>), 
+0058     disp(mean(tmp))
+0059     
+0060     <span class="comment">% compute the individual feature performance</span>
+0061     [acc1, mat1] = <a href="ToolLooCrossVal.html" class="code" title="function [Acc, conf_mat] = ToolLooCrossVal(FeatureMatrix, ClassIdx)">ToolLooCrossVal</a>(v(1, :), C);
+0062     sprintf(<span class="string">'centroid accuracy: %f'</span>, acc1)
+0063     [acc2, mat2] = <a href="ToolLooCrossVal.html" class="code" title="function [Acc, conf_mat] = ToolLooCrossVal(FeatureMatrix, ClassIdx)">ToolLooCrossVal</a>(v(2 ,:), C);
+0064     sprintf(<span class="string">'rms accuracy: %f'</span>, acc2)
+0065 <span class="keyword">end</span>
+0066 
+0067 <a name="_sub1" href="#_subfunctions" class="code">function [v] = ExtractFeaturesFromFile_I(cFilePath)</a>
+0068 
+0069     cFeatureNames = char(<span class="string">'SpectralCentroid'</span>,<span class="keyword">...</span>
+0070     <span class="string">'TimeRms'</span>);
+0071 
+0072     <span class="comment">% read audio</span>
+0073     [x, fs] = audioread(cFilePath);
+0074     x = x / max(abs(x));
+0075 
+0076     <span class="comment">% compute first feature</span>
+0077     feature = <a href="ComputeFeature.html" class="code" title="function [v, t] = ComputeFeature (cFeatureName, x, f_s, afWindow, iBlockLength, iHopLength)">ComputeFeature</a> (deblank(cFeatureNames(1, :)), x, fs);
+0078     v(1, 1)  = mean(feature);
+0079     
+0080     <span class="comment">% compute second feature</span>
+0081     feature = <a href="ComputeFeature.html" class="code" title="function [v, t] = ComputeFeature (cFeatureName, x, f_s, afWindow, iBlockLength, iHopLength)">ComputeFeature</a> (deblank(cFeatureNames(2, :)), x, fs);
+0082     v(2, 1)  = std(feature(1,:));
+0083 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

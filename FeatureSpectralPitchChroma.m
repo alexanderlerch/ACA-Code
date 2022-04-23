@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the pitch chroma from the magnitude spectrum
+%computes the pitch chroma from the magnitude spectrum
 %> called by ::ComputeFeature
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)

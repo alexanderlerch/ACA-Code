@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the lag of the autocorrelation function
+%computes the lag of the autocorrelation function
 %> called by ::ComputePitch
 %>
 %> @param x: audio signal

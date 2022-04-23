@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ToolGammatoneFb</title>
+  <meta name="keywords" content="ToolGammatoneFb">
+  <meta name="description" content="computes a gammatone filterbank">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ToolGammatoneFb.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ToolGammatoneFb
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes a gammatone filterbank</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [X, f_c] = ToolGammatoneFb(afAudioData, f_s, iNumBands, f_low) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes a gammatone filterbank
+&gt; see function MakeERBFilters.m from Slaneys Auditory Toolbox
+&gt;
+&gt; @param afAudioData: time domain sample data, dimension channels X samples
+&gt; @param f_s: sample rate of audio data
+&gt; @param iNumBands: number of filter bands
+&gt; @param f_low: start frequency
+&gt;
+&gt; @retval X filtered signal (dimension bands X samples)
+&gt; @retval f_c filterbank mid frequencies
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="PitchTimeAuditory.html" class="code" title="function [f_0, t] = PitchTimeAuditory(x, iBlockLength, iHopLength, f_s)">PitchTimeAuditory</a>	computes the f_0 via a simple "auditory" approach</li><li><a href="TestGammaToneFb.html" class="code" title="">TestGammaToneFb</a>	</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [f_c] = GetMidFrequencies_I (f_low, f_hi, iNumBands, fEarQ, fBW)</a></li><li><a href="#_sub2" class="code">function [afCoeffB, afCoeffA] = GetCoeffs_I (f_c, B, T)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes a gammatone filterbank</span>
+0002 <span class="comment">%&gt; see function MakeERBFilters.m from Slaneys Auditory Toolbox</span>
+0003 <span class="comment">%&gt;</span>
+0004 <span class="comment">%&gt; @param afAudioData: time domain sample data, dimension channels X samples</span>
+0005 <span class="comment">%&gt; @param f_s: sample rate of audio data</span>
+0006 <span class="comment">%&gt; @param iNumBands: number of filter bands</span>
+0007 <span class="comment">%&gt; @param f_low: start frequency</span>
+0008 <span class="comment">%&gt;</span>
+0009 <span class="comment">%&gt; @retval X filtered signal (dimension bands X samples)</span>
+0010 <span class="comment">%&gt; @retval f_c filterbank mid frequencies</span>
+0011 <span class="comment">% ======================================================================</span>
+0012 <a name="_sub0" href="#_subfunctions" class="code">function [X, f_c] = ToolGammatoneFb(afAudioData, f_s, iNumBands, f_low)</a>
+0013     
+0014     <span class="keyword">if</span> (nargin &lt; 4)
+0015         f_low = 100;
+0016     <span class="keyword">end</span>
+0017     <span class="keyword">if</span> (nargin &lt; 3)
+0018         iNumBands = 20;
+0019     <span class="keyword">end</span>
+0020         
+0021     <span class="comment">%initialization</span>
+0022     fEarQ   = 9.26449;                
+0023     fBW     = 24.7;
+0024     iOrder  = 1;
+0025     T       = 1/f_s;
+0026     
+0027     <span class="comment">% compute the mid frequencies</span>
+0028     f_c = <a href="#_sub1" class="code" title="subfunction [f_c] = GetMidFrequencies_I (f_low, f_hi, iNumBands, fEarQ, fBW)">GetMidFrequencies_I</a> (f_low, f_s/2, iNumBands, fEarQ, fBW);
+0029     
+0030     <span class="comment">% compute the coefficients</span>
+0031     [afCoeffB, afCoeffA] = <a href="#_sub2" class="code" title="subfunction [afCoeffB, afCoeffA] = GetCoeffs_I (f_c, B, T)">GetCoeffs_I</a> (  f_c, <span class="keyword">...</span>
+0032         1.019*2*pi*(((f_c/fEarQ).^iOrder + fBW^iOrder).^(1/iOrder)), <span class="keyword">...</span>
+0033         T);
+0034  
+0035     <span class="comment">% allocate output memory</span>
+0036     X = zeros(iNumBands, length(afAudioData));
+0037  
+0038     <span class="comment">% pre-processing: down-mixing</span>
+0039     <span class="keyword">if</span> (size(afAudioData,2)&gt; 1)
+0040         afAudioData = mean(afAudioData,2);
+0041     <span class="keyword">end</span>
+0042  
+0043     <span class="comment">% do the (cascaded) filter process</span>
+0044     <span class="keyword">for</span> (k = 1:iNumBands)
+0045         X(k,:) = afAudioData;
+0046         <span class="keyword">for</span> (j = 1:4)
+0047             X(k,:) = filter(afCoeffB(j,:,k), afCoeffA(j,:,k), X(k,:));
+0048         <span class="keyword">end</span>
+0049     <span class="keyword">end</span>
+0050 <span class="keyword">end</span>
+0051 
+0052 <span class="comment">%&gt; see function ERBSpace.m from Slaneys Auditory Toolbox</span>
+0053 <a name="_sub1" href="#_subfunctions" class="code">function [f_c] = GetMidFrequencies_I (f_low, f_hi, iNumBands, fEarQ, fBW)</a>
+0054     f_c = -(fEarQ*fBW) + exp((1:iNumBands)'*(-log(f_hi + fEarQ*fBW) + <span class="keyword">...</span>
+0055             log(f_low + fEarQ*fBW))/iNumBands) * (f_hi + fEarQ*fBW);
+0056 <span class="keyword">end</span>
+0057 
+0058 
+0059 <span class="comment">%&gt; see function MakeERBFilters.m from Slaneys Auditory Toolbox</span>
+0060 <a name="_sub2" href="#_subfunctions" class="code">function [afCoeffB, afCoeffA] = GetCoeffs_I (f_c, B, T)</a>
+0061 
+0062     fCos    = cos(2*f_c*pi*T);
+0063     fSin    = sin(2*f_c*pi*T);
+0064     fExp    = exp(B*T);
+0065     fSqrtA  = 2*sqrt(3+2^1.5);
+0066     fSqrtS  = 2*sqrt(3-2^1.5);
+0067 
+0068     A0      = T;
+0069     A2      = 0;
+0070     B0      = 1;
+0071     B1      = -2*fCos./fExp;
+0072     B2      = exp(-2*B*T);
+0073 
+0074     A11     = -(2*T*fCos./fExp + fSqrtA*T*fSin./ fExp)/2;
+0075     A12     = -(2*T*fCos./fExp - fSqrtA*T*fSin./ fExp)/2;
+0076     A13     = -(2*T*fCos./fExp + fSqrtS*T*fSin./ fExp)/2;
+0077     A14     = -(2*T*fCos./fExp - fSqrtS*T*fSin./ fExp)/2;
+0078 
+0079     fSqrtA  = sqrt(3 + 2^(3/2));
+0080     fSqrtS  = sqrt(3 - 2^(3/2));
+0081     fArg    = i*f_c*pi*T;
+0082     
+0083     afGain    = <span class="keyword">...</span>
+0084     abs((-2*exp(4*fArg)*T+2*exp(-(B*T)+2*fArg).*T.*(fCos-fSqrtS*fSin)).* <span class="keyword">...</span>
+0085         (-2*exp(4*fArg)*T+2*exp(-(B*T)+2*fArg).*T.*(fCos+fSqrtS*fSin)).* <span class="keyword">...</span>
+0086         (-2*exp(4*fArg)*T+2*exp(-(B*T)+2*fArg).*T.*(fCos-fSqrtA*fSin)).* <span class="keyword">...</span>
+0087         (-2*exp(4*fArg)*T+2*exp(-(B*T)+2*fArg).*T.*(fCos+fSqrtA*fSin))./ <span class="keyword">...</span>
+0088         (-2 ./ exp(2*B*T) - 2*exp(4*fArg) + 2*(1 + exp(4*fArg))./fExp).^4);
+0089 
+0090     <span class="comment">% this is Slaneys compact format - now resort into 3D Matrices</span>
+0091     <span class="comment">%fcoefs = [A0*ones(length(f_c),1) A11 A12 A13 A14 A2*ones(length(f_c),1) B0*ones(length(f_c),1) B1 B2 afGain];</span>
+0092     
+0093     afCoeffB = zeros(4,3,length(B));    
+0094     afCoeffA = zeros(4,3,length(B));
+0095     
+0096     <span class="keyword">for</span> (k = 1:length(B))
+0097         afCoeffB(1,:,k)     = [A0 A11(k) A2]/afGain(k);
+0098         afCoeffA(1,:,k)     = [B0 B1(k) B2(k)];
+0099         
+0100         afCoeffB(2,:,k)     = [A0 A12(k) A2];
+0101         afCoeffA(2,:,k)     = [B0 B1(k) B2(k)];
+0102         
+0103         afCoeffB(3,:,k)     = [A0 A13(k) A2];
+0104         afCoeffA(3,:,k)     = [B0 B1(k) B2(k)];
+0105         
+0106         afCoeffB(4,:,k)     = [A0 A14(k) A2];
+0107         afCoeffA(4,:,k)     = [B0 B1(k) B2(k)];
+0108         
+0109     <span class="keyword">end</span>
+0110 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

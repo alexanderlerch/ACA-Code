@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of PitchSpectralAcf</title>
+  <meta name="keywords" content="PitchSpectralAcf">
+  <meta name="description" content="computes the maximum of the spectral autocorrelation function">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; PitchSpectralAcf.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>PitchSpectralAcf
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes the maximum of the spectral autocorrelation function</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [f] = PitchSpectralAcf (X, f_s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes the maximum of the spectral autocorrelation function
+&gt; called by ::ComputePitch
+&gt;
+&gt; @param X: spectrogram (dimension FFTLength X Observations)
+&gt; @param f_s: sample rate of audio data 
+&gt;
+&gt; @retval f acf maximum location (in Hz)
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes the maximum of the spectral autocorrelation function</span>
+0002 <span class="comment">%&gt; called by ::ComputePitch</span>
+0003 <span class="comment">%&gt;</span>
+0004 <span class="comment">%&gt; @param X: spectrogram (dimension FFTLength X Observations)</span>
+0005 <span class="comment">%&gt; @param f_s: sample rate of audio data</span>
+0006 <span class="comment">%&gt;</span>
+0007 <span class="comment">%&gt; @retval f acf maximum location (in Hz)</span>
+0008 <span class="comment">% ======================================================================</span>
+0009 <a name="_sub0" href="#_subfunctions" class="code">function [f] = PitchSpectralAcf (X, f_s)</a>
+0010 
+0011     <span class="comment">% initialize</span>
+0012     f_min = 300;
+0013     
+0014     <span class="comment">% allocate</span>
+0015     f = zeros(1, size(X,2));
+0016     
+0017     <span class="comment">% use spectral symmetry for robustness</span>
+0018     X(1, :) = max(max(X));
+0019     X = [flipud(X); X];
+0020     
+0021     <span class="comment">% compute the ACF</span>
+0022     <span class="keyword">for</span> n = 1: size(X, 2)
+0023         eta_min = round(f_min/f_s * (size(X, 1)-2));
+0024         afCorr = xcorr(X(:,n),<span class="string">'coeff'</span>);
+0025         afCorr = afCorr((ceil((length(afCorr)/2))+1):end);
+0026         
+0027         <span class="comment">% find local maxima</span>
+0028         [fDummy, eta_peak] = findpeaks(afCorr);
+0029 
+0030         eta_min = max(eta_min, find(eta_peak &gt; eta_min, 1));
+0031         [fDummy, f(n)] = max(afCorr(eta_min:end));
+0032     <span class="keyword">end</span>
+0033     
+0034     <span class="comment">% find max index and convert to Hz (note: X has double length)</span>
+0035     f = (f + eta_min - 1) / (size(X, 1)-2) * f_s;
+0036 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

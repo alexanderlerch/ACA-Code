@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the novelty measure used by laroche
+%computes the novelty measure used by laroche
 %> called by ::ComputeNoveltyFunction
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)

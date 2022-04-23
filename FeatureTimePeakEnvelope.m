@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes two peak envelope measures for a time domain signal
+%computes two peak envelope measures for a time domain signal
 %> called by ::ComputeFeature
 %>
 %> @param x: audio signal

@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes f_0 through zero crossing distances
+%computes f_0 through zero crossing distances
 %> called by ::ComputePitch
 %>
 %> @param x: audio signal

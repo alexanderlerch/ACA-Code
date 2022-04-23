@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief downmixes audio signal
+%downmixes audio signal
 %>
 %> @param x: audio signal (dimension length x channels)
 %>

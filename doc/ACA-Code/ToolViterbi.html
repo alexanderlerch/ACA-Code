@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ToolViterbi</title>
+  <meta name="keywords" content="ToolViterbi">
+  <meta name="description" content="computes path through a probability matrix with Viterbi">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ToolViterbi.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ToolViterbi
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes path through a probability matrix with Viterbi</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [p, P_res] = ToolViterbi(P_E, P_T, p_s, bUseLogLikelihood) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes path through a probability matrix with Viterbi
+&gt;
+&gt; @param P_E: emmission probability matrix (S X N)
+&gt; @param P_T: transition probability matrix (S X S)
+&gt; @param p_s: start probability vector (S X 1)
+&gt; @param bUseLogLikelihood: flag (default: false)
+&gt;
+&gt; @retval p path vector with matrix row indices (N)
+&gt; @retval P_res probability matrix
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ComputeChords.html" class="code" title="function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (x, f_s, iBlockLength, iHopLength)">ComputeChords</a>	computes the chords of the input audio (super simple variant)</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes path through a probability matrix with Viterbi</span>
+0002 <span class="comment">%&gt;</span>
+0003 <span class="comment">%&gt; @param P_E: emmission probability matrix (S X N)</span>
+0004 <span class="comment">%&gt; @param P_T: transition probability matrix (S X S)</span>
+0005 <span class="comment">%&gt; @param p_s: start probability vector (S X 1)</span>
+0006 <span class="comment">%&gt; @param bUseLogLikelihood: flag (default: false)</span>
+0007 <span class="comment">%&gt;</span>
+0008 <span class="comment">%&gt; @retval p path vector with matrix row indices (N)</span>
+0009 <span class="comment">%&gt; @retval P_res probability matrix</span>
+0010 <span class="comment">% ======================================================================</span>
+0011 <a name="_sub0" href="#_subfunctions" class="code">function [p, P_res] = ToolViterbi(P_E, P_T, p_s, bUseLogLikelihood)</a>
+0012  
+0013     <span class="keyword">if</span> (nargin &lt; 4)
+0014         bUseLogLikelihood = false;
+0015     <span class="keyword">end</span>
+0016         
+0017     <span class="keyword">if</span> (~bUseLogLikelihood)
+0018         <span class="comment">% initialization</span>
+0019         I  = zeros(size(P_E));
+0020         P_res = zeros(size(P_E));
+0021         P_res(:, 1) = P_E(:, 1) .* p_s;
+0022 
+0023         <span class="comment">% recursion</span>
+0024         <span class="keyword">for</span> n = 2:size(P_E, 2)
+0025             <span class="keyword">for</span> s = 1:size(P_E, 1)
+0026                 <span class="comment">% find max of preceding times trans prob</span>
+0027                 [p_max, I(s, n)] = max(P_res(:, n-1) .* P_T(:, s));
+0028                 P_res(s, n) = P_E(s, n) * p_max;
+0029             <span class="keyword">end</span>
+0030         <span class="keyword">end</span>
+0031     <span class="keyword">else</span>
+0032         <span class="comment">% initialization</span>
+0033         P_E = log(P_E); <span class="comment">% hope for non-zero entries</span>
+0034         P_T = log(P_T); <span class="comment">% hope for non-zero entries</span>
+0035         p_s = log(p_s); <span class="comment">% hope for non-zero entries</span>
+0036         I = zeros(size(P_E));
+0037         P_res = zeros(size(P_E));
+0038 
+0039         P_res(:, 1) = P_E(:, 1) + p_s; 
+0040     
+0041         <span class="comment">% recursion</span>
+0042         <span class="keyword">for</span> n = 2:size(P_E, 2)
+0043             <span class="keyword">for</span> s = 1:size(P_E, 1)
+0044                 <span class="comment">% find max of preceding times trans prob</span>
+0045                 [p_max, I(s, n)] = max(P_res(:, n-1) + P_T(:, s));
+0046                 P_res(s, n) = P_E(s, n) + p_max;
+0047             <span class="keyword">end</span>
+0048         <span class="keyword">end</span>
+0049     <span class="keyword">end</span>
+0050         
+0051     <span class="comment">% traceback</span>
+0052     p = zeros(1,size(P_E, 2));  
+0053     <span class="comment">% start with the last element, then count down</span>
+0054     [prob, p(end)] = max(P_res(:, end));
+0055     <span class="keyword">for</span> n = size(P_E, 2)-1:-1:1
+0056         p(n) = I(p(n+1), n+1);
+0057     <span class="keyword">end</span>   
+0058 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

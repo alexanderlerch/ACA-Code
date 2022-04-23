@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FeatureSpectralPitchChroma</title>
+  <meta name="keywords" content="FeatureSpectralPitchChroma">
+  <meta name="description" content="computes the pitch chroma from the magnitude spectrum">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; FeatureSpectralPitchChroma.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>FeatureSpectralPitchChroma
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes the pitch chroma from the magnitude spectrum</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [vpc] = FeatureSpectralPitchChroma(X, f_s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes the pitch chroma from the magnitude spectrum
+&gt; called by ::ComputeFeature
+&gt;
+&gt; @param X: spectrogram (dimension FFTLength X Observations)
+&gt; @param f_s: sample rate of audio data
+&gt;
+&gt; @retval vpc pitch chroma
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [H] = GeneratePcFilters_I (iSpecLength, f_s)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes the pitch chroma from the magnitude spectrum</span>
+0002 <span class="comment">%&gt; called by ::ComputeFeature</span>
+0003 <span class="comment">%&gt;</span>
+0004 <span class="comment">%&gt; @param X: spectrogram (dimension FFTLength X Observations)</span>
+0005 <span class="comment">%&gt; @param f_s: sample rate of audio data</span>
+0006 <span class="comment">%&gt;</span>
+0007 <span class="comment">%&gt; @retval vpc pitch chroma</span>
+0008 <span class="comment">% ======================================================================</span>
+0009 <a name="_sub0" href="#_subfunctions" class="code">function [vpc] = FeatureSpectralPitchChroma(X, f_s)</a>
+0010 
+0011     <span class="comment">% allocate memory</span>
+0012     vpc = zeros(12, size(X, 2));
+0013 
+0014     <span class="comment">% generate filter matrix</span>
+0015     H = <a href="#_sub1" class="code" title="subfunction [H] = GeneratePcFilters_I (iSpecLength, f_s)">GeneratePcFilters_I</a>(size(X, 1), f_s);
+0016  
+0017     <span class="comment">% compute pitch chroma</span>
+0018     vpc = H * X.^2;
+0019     
+0020     <span class="comment">% norm pitch chroma to a sum of 1</span>
+0021     vpc = vpc ./ repmat(sum(vpc, 1), 12, 1);
+0022        
+0023     <span class="comment">% avoid NaN for silence frames</span>
+0024     vpc (:,sum(X, 1) == 0) = 0;
+0025 <span class="keyword">end</span>
+0026 
+0027 <span class="comment">%&gt; generate the semi-tone filters (simple averaging)</span>
+0028 <a name="_sub1" href="#_subfunctions" class="code">function [H] = GeneratePcFilters_I (iSpecLength, f_s)</a>
+0029 
+0030     <span class="comment">% initialization at C4</span>
+0031     f_mid = 261.63;
+0032     iNumOctaves = 4;
+0033     
+0034     <span class="comment">% sanity check</span>
+0035     <span class="keyword">while</span> (f_mid*2^iNumOctaves &gt; f_s/2 )
+0036         iNumOctaves = iNumOctaves - 1;
+0037     <span class="keyword">end</span>
+0038     
+0039     H = zeros (12, iSpecLength);
+0040     
+0041     <span class="keyword">for</span> i = 1:12
+0042         <span class="comment">% semitone boundaries in Hz</span>
+0043         afBounds  = [2^(-1/24) 2^(1/24)] * f_mid * 2 * (iSpecLength-1) / f_s;
+0044         <span class="keyword">for</span> j = 1:iNumOctaves
+0045            iBounds =    [ceil(2^(j-1)*afBounds(1)) <span class="keyword">...</span>
+0046                         floor(2^(j-1)*afBounds(2))]+1;
+0047            H(i, iBounds(1):iBounds(2)) = 1 / (iBounds(2)+1-iBounds(1));
+0048         <span class="keyword">end</span>
+0049         
+0050         <span class="comment">% increment to next semi-tone</span>
+0051         f_mid = f_mid * 2^(1/12);
+0052     <span class="keyword">end</span>   
+0053 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

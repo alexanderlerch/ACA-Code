@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the key of the input audio (super simple variant)
+%computes the chords of the input audio (super simple variant)
 %>
 %> @param x: time domain sample data, dimension samples X channels
 %> @param f_s: sample rate of audio data

@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief Leave One Out Cross Validation with Nearest Neighbor Classifier
+%Leave One Out Cross Validation with Nearest Neighbor Classifier
 %>
 %> @param FeatureMatrix: features (dimension iNumFeatures x iNumObservations)
 %> @param ClassIdx: vector with class indices (length iNumObservations, starting from 0)

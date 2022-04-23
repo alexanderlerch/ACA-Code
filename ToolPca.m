@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief principal component analysis
+%principal component analysis
 %>
 %> @param V: input matrix (features X observations)
 %>

@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of PitchTimeAuditory</title>
+  <meta name="keywords" content="PitchTimeAuditory">
+  <meta name="description" content="computes the f_0 via a simple &quot;auditory&quot; approach">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; PitchTimeAuditory.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>PitchTimeAuditory
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes the f_0 via a simple &quot;auditory&quot; approach</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [f_0, t] = PitchTimeAuditory(x, iBlockLength, iHopLength, f_s) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes the f_0 via a simple &quot;auditory&quot; approach
+&gt; called by ::ComputePitch
+&gt;
+&gt; @param x: audio signal
+&gt; @param iBlockLength: block length in samples
+&gt; @param iHopLength: hop length in samples
+&gt; @param f_s: sample rate of audio data 
+&gt;
+&gt; @retval f_0 fundamental frequency estimate (in Hz)
+&gt; @retval t time stamp of f_0 estimate (in s)
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ToolGammatoneFb.html" class="code" title="function [X, f_c] = ToolGammatoneFb(afAudioData, f_s, iNumBands, f_low)">ToolGammatoneFb</a>	computes a gammatone filterbank</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes the f_0 via a simple &quot;auditory&quot; approach</span>
+0002 <span class="comment">%&gt; called by ::ComputePitch</span>
+0003 <span class="comment">%&gt;</span>
+0004 <span class="comment">%&gt; @param x: audio signal</span>
+0005 <span class="comment">%&gt; @param iBlockLength: block length in samples</span>
+0006 <span class="comment">%&gt; @param iHopLength: hop length in samples</span>
+0007 <span class="comment">%&gt; @param f_s: sample rate of audio data</span>
+0008 <span class="comment">%&gt;</span>
+0009 <span class="comment">%&gt; @retval f_0 fundamental frequency estimate (in Hz)</span>
+0010 <span class="comment">%&gt; @retval t time stamp of f_0 estimate (in s)</span>
+0011 <span class="comment">% ======================================================================</span>
+0012 <a name="_sub0" href="#_subfunctions" class="code">function [f_0, t] = PitchTimeAuditory(x, iBlockLength, iHopLength, f_s)</a>
+0013 
+0014     <span class="comment">% number of results</span>
+0015     iNumOfBlocks = ceil (length(x)/iHopLength);
+0016     
+0017     <span class="comment">% compute time stamps</span>
+0018     t = ((0:iNumOfBlocks-1) * iHopLength + (iBlockLength/2)) / f_s;
+0019     
+0020     <span class="comment">% allocate memory</span>
+0021     f_0 = zeros(1, iNumOfBlocks);
+0022 
+0023     <span class="comment">%initialization</span>
+0024     f_max = 2000;
+0025     eta_min = round(f_s/f_max);
+0026     iNumBands = 20;
+0027     fLengthLpInS = 0.001;
+0028     iLengthLp = ceil(fLengthLpInS*f_s);
+0029 
+0030     <span class="comment">% apply filterbank</span>
+0031     X = <a href="ToolGammatoneFb.html" class="code" title="function [X, f_c] = ToolGammatoneFb(afAudioData, f_s, iNumBands, f_low)">ToolGammatoneFb</a>(x, f_s, iNumBands);
+0032     
+0033     <span class="comment">% half wave rectification</span>
+0034     X(X &lt; 0) = 0;
+0035 
+0036     <span class="comment">% smooth the results</span>
+0037     b = ones(iLengthLp,1)/iLengthLp;
+0038     X = filtfilt (b,1,X')';
+0039         
+0040     <span class="keyword">for</span> n = 1:iNumOfBlocks
+0041         afSumCorr = zeros(1, iBlockLength-1);
+0042         i_start = (n-1)*iHopLength + 1;
+0043         i_stop = min(length(x), i_start + iBlockLength - 1);
+0044  
+0045         <span class="comment">% compute ACF per band and summarize</span>
+0046         <span class="keyword">for</span> k = 1: iNumBands
+0047             <span class="keyword">if</span> sum(X(k, i_start:i_stop)) &lt; 1e-20
+0048                 <span class="keyword">continue</span>;
+0049             <span class="keyword">end</span>
+0050             afCorr = xcorr( [X(k, i_start:i_stop), <span class="keyword">...</span>
+0051                             zeros(1, iBlockLength-(i_stop-i_start)-1)], <span class="keyword">...</span>
+0052                             <span class="string">'coeff'</span>);
+0053             afSumCorr = afSumCorr + afCorr((ceil((length(afCorr)/2))+1):end);
+0054         <span class="keyword">end</span>
+0055         
+0056         <span class="comment">% find local maxima</span>
+0057         [afPeaks, eta_peak] = findpeaks(afSumCorr);
+0058 
+0059         i_tmp = find(eta_peak &gt; eta_min,1);
+0060         
+0061         <span class="comment">% set all entries below eta_min and the first local maximum to 0</span>
+0062         afSumCorr(1:eta_peak(i_tmp)-1) = 0;
+0063 
+0064         <span class="comment">% calculate the acf maximum</span>
+0065         [fDummy, f_0(n)] = max(afSumCorr);
+0066     <span class="keyword">end</span>
+0067  
+0068     <span class="comment">% convert to Hz</span>
+0069     ind = f_0 &lt; eta_min;
+0070     f_0 = f_s ./ f_0;
+0071     f_0(ind==true) = 0;
+0072 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

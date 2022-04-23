@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ToolFreq2Mel</title>
+  <meta name="keywords" content="ToolFreq2Mel">
+  <meta name="description" content="converts frequency to mel">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ToolFreq2Mel.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ToolFreq2Mel
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>converts frequency to mel</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [mel] = ToolFreq2Mel(fInHz, cModel) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">converts frequency to mel
+&gt;
+&gt; @param fInHz: frequency
+&gt; @param cModel: 'Fant','Shaughnessy', or 'Umesh'
+&gt;
+&gt; @retval mel pitch value
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ComputeMelSpectrogram.html" class="code" title="function [M, f_c, t] = ComputeMelSpectrogram (x, f_s, bLogarithmic, afWindow, iBlockLength, iHopLength, iNumMelBands, fMax)">ComputeMelSpectrogram</a>	computes a mel spectrogram from the audio data</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [mel] = acaFant_I(f)</a></li><li><a href="#_sub2" class="code">function [mel] = acaShaughnessy_I(f)</a></li><li><a href="#_sub3" class="code">function [mel] = acaUmesh_I(f)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%converts frequency to mel</span>
+0002 <span class="comment">%&gt;</span>
+0003 <span class="comment">%&gt; @param fInHz: frequency</span>
+0004 <span class="comment">%&gt; @param cModel: 'Fant','Shaughnessy', or 'Umesh'</span>
+0005 <span class="comment">%&gt;</span>
+0006 <span class="comment">%&gt; @retval mel pitch value</span>
+0007 <span class="comment">% ======================================================================</span>
+0008 <a name="_sub0" href="#_subfunctions" class="code">function [mel] = ToolFreq2Mel(fInHz, cModel)</a>
+0009 
+0010     <span class="keyword">if</span> (nargin &lt; 2)
+0011         cModel = <span class="string">'Fant'</span>;
+0012     <span class="keyword">end</span>
+0013 
+0014     <span class="comment">% set function handle</span>
+0015     hPitchFunc = str2func ([<span class="string">'aca'</span> cModel <span class="string">'_I'</span>]);
+0016     
+0017     mel = hPitchFunc(fInHz);
+0018 <span class="keyword">end</span>
+0019 
+0020 <span class="comment">% Fant</span>
+0021 <a name="_sub1" href="#_subfunctions" class="code">function [mel] = acaFant_I(f)</a>
+0022     mel = 1000 * log2(1 + f/1000);
+0023 <span class="keyword">end</span>
+0024 
+0025 <span class="comment">% Shaughnessy</span>
+0026 <a name="_sub2" href="#_subfunctions" class="code">function [mel] = acaShaughnessy_I(f)</a>
+0027     mel = 2595 * log10(1 + f/700);
+0028 <span class="keyword">end</span>
+0029 
+0030 <span class="comment">% Umesh</span>
+0031 <a name="_sub3" href="#_subfunctions" class="code">function [mel] = acaUmesh_I(f)</a>
+0032     mel = f./(2.4e-4*f + 0.741);
+0033 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

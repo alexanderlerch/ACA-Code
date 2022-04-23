@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief gaussian mixture model
+%gaussian mixture model
 %>
 %> @param FeatureMatrix: features for all train observations (dimension iNumFeatures x iNumObservations)
 %> @param k: number of gaussians

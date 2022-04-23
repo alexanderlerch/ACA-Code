@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief computes the tonal power ratio from the magnitude spectrum
+%computes the tonal power ratio from the magnitude spectrum
 %> called by ::ComputeFeature
 %>
 %> @param X: spectrogram (dimension FFTLength X Observations)

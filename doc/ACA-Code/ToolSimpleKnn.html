@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ToolSimpleKnn</title>
+  <meta name="keywords" content="ToolSimpleKnn">
+  <meta name="description" content="performs knn classification">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ToolSimpleKnn.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ToolSimpleKnn
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>performs knn classification</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [class] = ToolSimpleKnn(TestFeatureVector, TrainFeatureMatrix, TrainClassIndices, k) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">performs knn classification
+&gt;
+&gt; @param TestFeatureVector: features for test observation (length iNumFeatures)
+&gt; @param TrainFeatureMatrix: features for all train observations (dimension iNumFeatures x iNumObservations)
+&gt; @param TrainClassIndices: audio signal (length iNumObservations)
+&gt; @param k: number of points taken into account (default = 3)
+&gt;
+&gt; @retval class index of the resulting class
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ToolLooCrossVal.html" class="code" title="function [Acc, conf_mat] = ToolLooCrossVal(FeatureMatrix, ClassIdx)">ToolLooCrossVal</a>	Leave One Out Cross Validation with Nearest Neighbor Classifier</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function d = computeEucDist_I(A, B)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%performs knn classification</span>
+0002 <span class="comment">%&gt;</span>
+0003 <span class="comment">%&gt; @param TestFeatureVector: features for test observation (length iNumFeatures)</span>
+0004 <span class="comment">%&gt; @param TrainFeatureMatrix: features for all train observations (dimension iNumFeatures x iNumObservations)</span>
+0005 <span class="comment">%&gt; @param TrainClassIndices: audio signal (length iNumObservations)</span>
+0006 <span class="comment">%&gt; @param k: number of points taken into account (default = 3)</span>
+0007 <span class="comment">%&gt;</span>
+0008 <span class="comment">%&gt; @retval class index of the resulting class</span>
+0009 <span class="comment">% ======================================================================</span>
+0010 <a name="_sub0" href="#_subfunctions" class="code">function [class] = ToolSimpleKnn(TestFeatureVector, TrainFeatureMatrix, TrainClassIndices, k)</a>
+0011  
+0012     <span class="comment">% set order to 3 if not set</span>
+0013     <span class="keyword">if</span> (nargin &lt; 4)
+0014         k = 3;
+0015     <span class="keyword">end</span>
+0016  
+0017     <span class="comment">% compute distances to all training observations</span>
+0018     d = <a href="#_sub1" class="code" title="subfunction d = computeEucDist_I(A, B)">computeEucDist_I</a>(TestFeatureVector, TrainFeatureMatrix);
+0019     
+0020     <span class="comment">% sort the distances to find closest</span>
+0021     [dummy,idx] = sort(d); 
+0022     
+0023     <span class="comment">% pick the majority of the k closest training observations</span>
+0024     <span class="comment">% note that for multi-class problems and even k, this needs to be</span>
+0025     <span class="comment">% refined</span>
+0026     class = mode(TrainClassIndices(idx(1:k)));
+0027 <span class="keyword">end</span>
+0028 
+0029 <a name="_sub1" href="#_subfunctions" class="code">function d = computeEucDist_I(A, B)</a>
+0030     d = sqrt(sum(A.^2, 2)*ones(1,size(B,1)) - <span class="keyword">...</span>
+0031         2*A*B' + <span class="keyword">...</span>
+0032         ones(size(A,1),1)*sum(B.^2, 2)');
+0033 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

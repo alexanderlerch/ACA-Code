@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ComputeSpectrogram</title>
+  <meta name="keywords" content="ComputeSpectrogram">
+  <meta name="description" content="computes a mel spectrogram from the audio data">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../menu.html">Home</a> &gt;  <a href="menu.html">ACA-Code</a> &gt; ComputeSpectrogram.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../menu.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="menu.html">Index for ACA-Code&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>ComputeSpectrogram
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>computes a mel spectrogram from the audio data</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [X, f, t] = ComputeSpectrogram (x, f_s, afWindow, iBlockLength, iHopLength, bNormalize, bMagnitude) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">computes a mel spectrogram from the audio data
+&gt;
+&gt; @param x: time domain sample data, dimension channels X samples
+&gt; @param f_s: sample rate of audio data
+&gt; @param afWindow: FFT window of length iBlockLength (default: hann), can be [] empty
+&gt; @param iBlockLength: internal block length (default: 4096 samples)
+&gt; @param iHopLength: internal hop length (default: 2048 samples)
+&gt; @param bNormalize: normalize input audio (default: True)
+&gt; @param bMagnitude: return magnitude instead of complex spectrum (default: True)
+&gt;
+&gt; @retval X spectrogram
+&gt; @retval f frequency bands
+&gt; @retval t time stamps
+ ======================================================================</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ToolBlockAudio.html" class="code" title="function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)">ToolBlockAudio</a>	blocks audio signal into overlapping blocks</li><li><a href="ToolDownmix.html" class="code" title="function [x_downmix] = ToolDownmix(x)">ToolDownmix</a>	downmixes audio signal</li><li><a href="ToolNormalizeAudio.html" class="code" title="function [x_norm] = ToolNormalizeAudio(x)">ToolNormalizeAudio</a>	normalizes audio signal</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ComputeBeatHisto.html" class="code" title="function [T, Bpm] = ComputeBeatHisto (x, f_s, cMethod, afWindow, iBlockLength, iHopLength)">ComputeBeatHisto</a>	computes a simple beat histogram</li><li><a href="ComputeFeature.html" class="code" title="function [v, t] = ComputeFeature (cFeatureName, x, f_s, afWindow, iBlockLength, iHopLength)">ComputeFeature</a>	computes a feature from the audio data</li><li><a href="ComputeFingerprint.html" class="code" title="function [SubFingerprint, tf] = ComputeFingerprint (x, f_s)">ComputeFingerprint</a>	computes a fingerprint of the audio data (only the subfingerprint, one</li><li><a href="ComputeMelSpectrogram.html" class="code" title="function [M, f_c, t] = ComputeMelSpectrogram (x, f_s, bLogarithmic, afWindow, iBlockLength, iHopLength, iNumMelBands, fMax)">ComputeMelSpectrogram</a>	computes a mel spectrogram from the audio data</li><li><a href="ComputeNoveltyFunction.html" class="code" title="function [d, t, G_T, iPeaks] = ComputeNoveltyFunction (cNoveltyName, x, f_s, afWindow, iBlockLength, iHopLength)">ComputeNoveltyFunction</a>	computes the novelty function for onset detection</li><li><a href="ComputePitch.html" class="code" title="function [f, t] = ComputePitch (cPitchTrackName, x, f_s, afWindow, iBlockLength, iHopLength)">ComputePitch</a>	computes the fundamental frequency of the (monophonic) audio</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%computes a mel spectrogram from the audio data</span>
+0002 <span class="comment">%&gt;</span>
+0003 <span class="comment">%&gt; @param x: time domain sample data, dimension channels X samples</span>
+0004 <span class="comment">%&gt; @param f_s: sample rate of audio data</span>
+0005 <span class="comment">%&gt; @param afWindow: FFT window of length iBlockLength (default: hann), can be [] empty</span>
+0006 <span class="comment">%&gt; @param iBlockLength: internal block length (default: 4096 samples)</span>
+0007 <span class="comment">%&gt; @param iHopLength: internal hop length (default: 2048 samples)</span>
+0008 <span class="comment">%&gt; @param bNormalize: normalize input audio (default: True)</span>
+0009 <span class="comment">%&gt; @param bMagnitude: return magnitude instead of complex spectrum (default: True)</span>
+0010 <span class="comment">%&gt;</span>
+0011 <span class="comment">%&gt; @retval X spectrogram</span>
+0012 <span class="comment">%&gt; @retval f frequency bands</span>
+0013 <span class="comment">%&gt; @retval t time stamps</span>
+0014 <span class="comment">% ======================================================================</span>
+0015 <a name="_sub0" href="#_subfunctions" class="code">function [X, f, t] = ComputeSpectrogram (x, f_s, afWindow, iBlockLength, iHopLength, bNormalize, bMagnitude)</a>
+0016 
+0017     <span class="comment">% set default parameters if necessary</span>
+0018     <span class="keyword">if</span> (nargin &lt; 7)
+0019         bMagnitude = true;
+0020     <span class="keyword">end</span>
+0021     <span class="keyword">if</span> (nargin &lt; 6)
+0022         bNormalize = true;
+0023     <span class="keyword">end</span>
+0024     <span class="keyword">if</span> (nargin &lt; 5)
+0025         iHopLength = 2048;
+0026     <span class="keyword">end</span>
+0027     <span class="keyword">if</span> (nargin &lt; 4)
+0028         iBlockLength = 4096;
+0029     <span class="keyword">end</span>
+0030     <span class="keyword">if</span> (nargin &lt; 3 || isempty(afWindow))
+0031         afWindow = hann(iBlockLength,<span class="string">'periodic'</span>);
+0032     <span class="keyword">end</span>
+0033     
+0034     <span class="keyword">if</span> (length(afWindow) ~= iBlockLength)
+0035         error(<span class="string">'window length mismatch'</span>);
+0036     <span class="keyword">end</span>
+0037     
+0038     <span class="keyword">if</span> (size(afWindow, 1) &lt; size(afWindow, 2))
+0039         afWindow = afWindow';
+0040     <span class="keyword">end</span>
+0041     <span class="keyword">if</span> (size(x, 1) &lt; size(x, 2))
+0042         x = x';
+0043     <span class="keyword">end</span>
+0044     
+0045     <span class="comment">% pre-processing: down-mixing</span>
+0046     x = <a href="ToolDownmix.html" class="code" title="function [x_downmix] = ToolDownmix(x)">ToolDownmix</a>(x);
+0047     
+0048     <span class="comment">% pre-processing: normalization</span>
+0049     <span class="keyword">if</span> bNormalize
+0050         x = <a href="ToolNormalizeAudio.html" class="code" title="function [x_norm] = ToolNormalizeAudio(x)">ToolNormalizeAudio</a>(x);
+0051     <span class="keyword">end</span>
+0052 
+0053     [x_b, t] = <a href="ToolBlockAudio.html" class="code" title="function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)">ToolBlockAudio</a> (x, iBlockLength, iHopLength, f_s);
+0054 
+0055     X = zeros(size(x_b, 2)/2+1, size(x_b, 1));
+0056     f = linspace(0, f_s/2, (size(X, 1)));
+0057 
+0058     <span class="keyword">for</span> n = 1:size(X,2)
+0059         tmp = fft(x_b(n, :)' .* afWindow);
+0060         
+0061         <span class="keyword">if</span> bMagnitude
+0062             X(:, n) = abs(tmp(1:size(X, 1))) * 2 / iBlockLength;
+0063         <span class="keyword">else</span>
+0064             X(:, n) = (tmp(1:size(X, 1))) * 2 / iBlockLength;
+0065         <span class="keyword">end</span>            
+0066     <span class="keyword">end</span>
+0067     
+0068     <span class="comment">% normalization</span>
+0069     X([1 end],:) = X([1 end],:) / sqrt(2);
+0070 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Fri 22-Apr-2022 20:50:49 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,5 +1,4 @@
-% ======================================================================
-%> @brief converts frequency to bark
+%converts frequency to bark
 %>
 %> @param fInHz: frequency
 %> @param cModel: 'Schroeder','Terhardt', 'Zwicker', or 'Traunmuller'
