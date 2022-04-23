@@ -36,6 +36,7 @@ conventions:
 >   - [Non-Negative Matrix Factorization](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolSimpleNmf.m)
 >   - [Viterbi](https://github.com/alexanderlerch/ACA-Code/blob/master/ToolViterbi.m) algorithm
 
+The auto-generated documentation can be found [here](https://alexanderlerch.github.io/ACA-Code/).
 
 ## design principles
 Please note that the provided code examples are only _intended to showcase 
