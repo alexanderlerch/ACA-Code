@@ -21,6 +21,6 @@ function [x_b, t] = ToolBlockAudio(x, iBlockLength, iHopLength, f_s)
     x_b = zeros(iNumBlocks, iBlockLength);
     
     for n = 1:iNumBlocks
-        x_b(n, :) = xPadded((n-1)*iHopLength+1:(n-1)*iHopLength+iBlockLength);
+        x_b(n,:) = xPadded((n-1)*iHopLength+1:(n-1)*iHopLength+iBlockLength);
     end
 end
