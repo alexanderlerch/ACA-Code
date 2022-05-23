@@ -32,7 +32,7 @@ function [vta, t] = FeatureTimeMaxAcf(x, iBlockLength, iHopLength, f_s, f_max, f
         
         % calculate the acf
         afCorr = xcorr(x_b(n, :), 'coeff');
-        afCorr = afCorr((ceil((length(afCorr)/2))+1):end);
+        afCorr = afCorr((ceil((length(afCorr)/2))):end);
         
         % ignore values until threshold was crossed
         eta_tmp = find (afCorr < fMinThresh, 1);
