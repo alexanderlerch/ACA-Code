@@ -15,13 +15,13 @@ function [vpc] = FeatureSpectralPitchChroma(X, f_s)
     H = GeneratePcFilters_I(size(X, 1), f_s);
  
     % compute pitch chroma
-    vpc = H * X.^2;
+    v = H * X.^2;
     
     % norm pitch chroma to a sum of 1
-    vpc = vpc ./ repmat(sum(vpc, 1), 12, 1);
+    vpc = v ./ repmat(sum(v, 1), 12, 1);
        
     % avoid NaN for silence frames
-    vpc (:,sum(X, 1) == 0) = 0;
+    vpc (:,sum(v, 1) == 0) = 0;
 end
 
 %> generate the semi-tone filters (simple averaging)
