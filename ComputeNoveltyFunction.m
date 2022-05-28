@@ -59,6 +59,8 @@ function [d, t, G_T, iPeaks] = ComputeNoveltyFunction (cNoveltyName, x, f_s, afW
 
     % novelty function
     d = hNoveltyFunc(X, f_s);
+
+    d = d/max(d);
     
     % smooth novelty function
     b = ones(iSmoothLpLen,1)/iSmoothLpLen;

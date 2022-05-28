@@ -11,7 +11,7 @@ function [d_hai] = NoveltyHainsworth (X, f_s)
     epsilon     = 1e-5;
     
     % difference spectrum
-    X           = [X(:,1), sqrt(X)];
+    X           = [X(:,1), X];
     X(X<=0)     = epsilon;
     
     % flux
