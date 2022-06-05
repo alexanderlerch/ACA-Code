@@ -16,7 +16,7 @@ function [f] = PitchSpectralAcf (X, f_s)
     
     % use spectral symmetry for robustness
     X(1, :) = max(max(X));
-    X = [flipud(X); X];
+    X = [flipud(X(2:end, :)); X(1:end-1,:)];
     
     % compute the ACF
     for n = 1: size(X, 2)
