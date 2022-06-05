@@ -71,5 +71,6 @@ function [T, Bpm] = ComputeBeatHisto (x, f_s, cMethod, afWindow, iBlockLength, i
         hIdx    = min(find(Bpm > 200));
         T       = T(lIdx:hIdx);
         Bpm     = Bpm(lIdx:hIdx);
+        T = T/max(T);
     end
 end
