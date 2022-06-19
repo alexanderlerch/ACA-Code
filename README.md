@@ -58,13 +58,16 @@ The readability of the source code will sometimes come at the cost of lower perf
 All code is matched exactly with [Python implementations](https://www.github.com/alexanderlerch/pyACA) and the equations in the book. This also means that the code might **violate typical style conventions** in order to be consistent.
 
 ## related repositories and links
-The python source code in this repository is matched with corresponding source code in the [Python repository](https://www.github.com/alexanderlerch/pyACA).
+The source code in this repository is matched with corresponding source code in the [Python repository](https://www.github.com/alexanderlerch/pyACA). C++ implementations with identical functionality can be found in the [C++ repository](https://www.github.com/alexanderlerch/libACA).
 
 Other, _related repositories_ are
 * [ACA-Slides](https://www.github.com/alexanderlerch/ACA-Slides): slide decks for teaching and learning audio content analysis
 * [ACA-Plots](https://www.github.com/alexanderlerch/ACA-Plots): Matlab scripts for generating all plots in the book and slides
 
 The _main entry point_ to all book-related information is [AudioContentAnalysis.org](https://www.AudioContentAnalysis.org)
+
+## documentation
+The documentation can be found at [https://alexanderlerch.github.io/ACA-Code/](https://alexanderlerch.github.io/ACA-Code/).
 
 ## getting started
 
