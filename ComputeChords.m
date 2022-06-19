@@ -58,7 +58,7 @@ function [cChordLabel, aiChordIdx, t, P_E] = ComputeChords (x, f_s, iBlockLength
                                 true);
                             
     % assign result string
-    cChordLabel = deblank(cChords(aiChordIdx,:));
+    cChordLabel = deblank(cChords(aiChordIdx(2,:),:));
     % we want to start with 0!
     aiChordIdx = aiChordIdx - 1; 
 end

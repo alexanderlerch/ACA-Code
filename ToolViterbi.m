@@ -11,7 +11,7 @@
 function [p, P_res] = ToolViterbi(P_E, P_T, p_s, bUseLogLikelihood)
  
     if (nargin < 4)
-        bUseLogLikelihood = false;
+        bUseLogLikelihood = true;
     end
         
     if (~bUseLogLikelihood)

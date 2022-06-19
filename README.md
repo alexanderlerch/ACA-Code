@@ -7,6 +7,11 @@
 # ACA-Code
 Matlab scripts accompanying the book "An Introduction to Audio Content Analysis" (www.AudioContentAnalysis.org). The source code shows example implementations of basic approaches, features, and algorithms for music audio content analysis.
 
+All implementations are also available in:
+* [Python: pyACA](https://github.com/alexanderlerch/pyACA)
+* [C++: libACA](https://github.com/alexanderlerch/libACA)
+
+
 ## functionality
 The top-level functions are (alphabetical):
 > - [`ComputeBeatHisto`](https://github.com/alexanderlerch/ACA-Code/blob/master/ComputeBeatHisto.m): calculates a simple beat histogram

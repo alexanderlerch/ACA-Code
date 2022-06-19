@@ -6,9 +6,11 @@
 % ======================================================================
 function [x_norm] = ToolNormalizeAudio(x)
     
+    x_norm = x;
     if (length(x) > 1)
-        x_norm = x / max(abs(x), [], 'all');
-    else
-        x_norm = x;
+        fMax = max(abs(x), [], 'all');
+        if (fMax ~= 0)
+            x_norm = x / fMax;
+        end
     end
 end
