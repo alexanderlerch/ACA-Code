@@ -40,7 +40,7 @@ function [mu, sigma, state] = ToolGmm(V, k, numMaxIter, prevState)
     sigma = state.sigma;
 end
 
-function [state] = updateGaussians_I(FeatureMatrix,p,state)
+function [state] = updateGaussians_I(FeatureMatrix, p, state)
 
     % number of clusters
     K = size(state.m, 2);
@@ -81,24 +81,24 @@ function [p] = computeProb_I(FeatureMatrix, state)
     end
     
     % norm over clusters
-    p = p ./ repmat(sum(p,2),1,K);
+    p = p ./ repmat(sum(p, 2), 1, K);
 end
 
-function [state] = initState_I(FeatureMatrix,K)
+function [state] = initState_I(FeatureMatrix, K)
 
     %init
-    m       = zeros(size(FeatureMatrix,1), K);
-    sigma   = zeros(size(FeatureMatrix,1), size(FeatureMatrix,1), K);
-    prior   = zeros(1,K);
+    m       = zeros(size(FeatureMatrix, 1), K);
+    sigma   = zeros(size(FeatureMatrix, 1), size(FeatureMatrix, 1), K);
+    prior   = zeros(1, K);
 
     % pick random points as cluster means
-    mIdx    = round(rand(1,K)*(size(FeatureMatrix,2)-1))+1;
+    mIdx    = round(rand(1, K) * (size(FeatureMatrix, 2)-1)) + 1;
  
     % assign means etc.
-    m       = FeatureMatrix(:,mIdx);
-    prior   = ones(1,K)/K;
-    sigma   = repmat(cov(FeatureMatrix'),1,1,K);
+    m       = FeatureMatrix(:, mIdx);
+    prior   = ones(1, K) / K;
+    sigma   = repmat(cov(FeatureMatrix'), 1, 1, K);
 
     % write initial state
-    state   = struct('m',m,'sigma',sigma,'prior',prior);
+    state   = struct('m', m, 'sigma', sigma, 'prior', prior);
 end

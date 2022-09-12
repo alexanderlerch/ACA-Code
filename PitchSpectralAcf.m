@@ -4,15 +4,15 @@
 %> @param X: spectrogram (dimension FFTLength X Observations)
 %> @param f_s: sample rate of audio data 
 %>
-%> @retval f acf maximum location (in Hz)
+%> @retval f_0 acf maximum location (in Hz)
 % ======================================================================
-function [f] = PitchSpectralAcf (X, f_s)
+function [f_0] = PitchSpectralAcf (X, f_s)
 
     % initialize
     f_min = 300;
     
     % allocate
-    f = zeros(1, size(X,2));
+    f_0 = zeros(1, size(X,2));
     
     % use spectral symmetry for robustness
     X(1, :) = max(max(X));
@@ -28,9 +28,9 @@ function [f] = PitchSpectralAcf (X, f_s)
         [fDummy, eta_peak] = findpeaks(afCorr);
 
         eta_min = max(eta_min, find(eta_peak > eta_min, 1));
-        [fDummy, f(n)] = max(afCorr(eta_min:end));
+        [fDummy, f_0(n)] = max(afCorr(eta_min:end));
     end
     
     % find max index and convert to Hz (note: X has double length)
-    f = (f + eta_min - 1) / (size(X, 1)-2) * f_s;
+    f_0 = (f_0 + eta_min - 1) / (size(X, 1)-2) * f_s;
 end

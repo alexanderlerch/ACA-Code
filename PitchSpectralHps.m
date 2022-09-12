@@ -4,9 +4,9 @@
 %> @param X: spectrogram (dimension FFTLength X Observations)
 %> @param f_s: sample rate of audio data 
 %>
-%> @retval f HPS maximum (in Hz)
+%> @retval f_0 HPS maximum (in Hz)
 % ======================================================================
-function [f] = PitchSpectralHps (X, f_s)
+function [f_0] = PitchSpectralHps (X, f_s)
 
     % initialize
     iOrder = 4;
@@ -21,7 +21,7 @@ function [f] = PitchSpectralHps (X, f_s)
     end
     
     % find max index and convert to Hz
-    [fDummy, f] = max(afHps(k_min:end, :), [], 1);
-    f = (f + k_min - 2) / (size(X, 1)-1) * f_s / 2;
-    f(sum(afHps, 1) == 0) = 0;
+    [fDummy, f_0] = max(afHps(k_min:end, :), [], 1);
+    f_0 = (f_0 + k_min - 2) / (size(X, 1)-1) * f_s / 2;
+    f_0(sum(afHps, 1) == 0) = 0;
 end

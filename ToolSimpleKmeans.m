@@ -28,7 +28,7 @@ function [clusterIdx, state] = ToolSimpleKmeans(V, K, numMaxIter, prevState)
     % assign observations to clusters
     clusterIdx = assignClusterLabels_I(V, state);
     
-    for i=1:numMaxIter
+    for i = 1:numMaxIter
         prevState = state;
         
         % update means
@@ -41,7 +41,7 @@ function [clusterIdx, state] = ToolSimpleKmeans(V, K, numMaxIter, prevState)
         clusterIdx = assignClusterLabels_I(V, state);
         
         % if we have converged, break
-        if (max(sum(abs(state.m-prevState.m)))==0)
+        if (max(sum(abs(state.m-prevState.m))) == 0)
             break;
         end
     end
