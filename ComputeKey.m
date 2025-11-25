@@ -39,7 +39,7 @@ function [cKey] = ComputeKey (x, f_s, afWindow, iBlockLength, iHopLength)
     end        
 
     % extract audio pitch chroma
-    [v_pc, t] = computeFeature("SpectralPitchChroma", x, f_s, afWindow, iBlockLength, iHopLength);
+    [v_pc, t] = ComputeFeature('SpectralPitchChroma', x, f_s, afWindow, iBlockLength, iHopLength);
 
     % average pitch chroma
     v_pc = mean(v_pc, 2);
